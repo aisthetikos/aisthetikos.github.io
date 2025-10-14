@@ -11,13 +11,14 @@ class FarinelliBreathingExercise {
         this.isRunning = false;
         this.isPaused = false;
         
-        // Audio context for chimes
+        // Audio context for chimes and metronome
         this.audioContext = null;
         this.chimeFrequencies = {
             inhale: 523.25, // C5
             hold: 659.25,   // E5
             exhale: 392.00  // G4
         };
+        this.metronomeFrequency = 800; // Higher frequency for subtle tick
         
         this.initializeElements();
         this.setupEventListeners();
@@ -173,6 +174,10 @@ class FarinelliBreathingExercise {
         
         while (this.timeRemaining > 0 && this.isRunning && !this.isPaused) {
             this.countdownElement.textContent = this.timeRemaining;
+            
+            // Play gentle metronome tick for each count
+            this.playMetronomeTick();
+            
             await this.sleep(1000);
             this.timeRemaining--;
         }
@@ -229,6 +234,27 @@ class FarinelliBreathingExercise {
         
         oscillator.start(this.audioContext.currentTime);
         oscillator.stop(this.audioContext.currentTime + 1.0);
+    }
+    
+    playMetronomeTick() {
+        if (!this.audioContext) return;
+        
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(this.metronomeFrequency, this.audioContext.currentTime);
+        oscillator.type = 'sine';
+        
+        // Very gentle, short tick
+        gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.03, this.audioContext.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.1);
+        
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.1);
     }
     
     sleep(ms) {

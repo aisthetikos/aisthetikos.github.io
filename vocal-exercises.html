@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lamperti Vocal Exercises</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        .exercise-card {
+        <footer>
+            <p>Based on the Lamperti Daily Exercises - Adapted for Tenor Voices</p>
+            <p><small>Exercises focus on tenor-specific techniques including passaggio work and high note development</small></p>
+        </footer>    .exercise-card {
             background: #fff;
             border-radius: 15px;
             padding: 25px;
@@ -140,8 +135,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Lamperti Vocal Exercises</h1>
-            <p class="subtitle">Classical vocal training exercises extracted from sheet music</p>
+            <h1>Lamperti Vocal Exercises for Tenor</h1>
+            <p class="subtitle">Classical vocal training exercises adapted for tenor voices</p>
             
             <nav class="main-nav">
                 <a href="./" class="nav-link">Breathing Exercise</a>
@@ -150,8 +145,8 @@
         </header>
 
         <div class="stats">
-            <span id="totalExercises">0</span> exercises available | 
-            <span id="filteredCount">0</span> showing
+            <span id="totalExercises">10</span> tenor exercises available | 
+            <span id="filteredCount">10</span> showing
         </div>
 
         <div class="filters">
@@ -185,125 +180,163 @@
         </div>
 
         <footer>
-            <p>Based on the Lamperti Daily Exercises - Classical vocal training methodology.</p>
-            <p><small>Exercises adapted from traditional vocal pedagogy techniques</small></p>
+            <p>Based on the Lamperti Daily Exercises - Adapted for Tenor Voices</p>
+            <p><small>Exercises focus on tenor-specific techniques including passaggio work and high note development</small></p>
         </footer>
     </div>
 
     <script>
-        // Lamperti Daily Exercises - Based on classical vocal training methodology
+        // Lamperti Daily Exercises - Adapted for Tenor Voices
         const VOCAL_EXERCISES = [
             {
                 id: "exercise_1",
-                title: "Exercise 1 - Basic Scale Practice",
+                title: "Exercise 1 - Basic Scale Practice (Tenor Range)",
                 difficulty: "beginner",
-                text_content: "C major scale ascending and descending. Focus on even tone production and clear articulation. Start with comfortable range and gradually extend.",
+                text_content: "C major scale in tenor range (C3-C4). Focus on even tone production and clear articulation. Essential for developing the foundation of tenor technique.",
                 instructions: [
-                    "Begin with C major scale, one octave",
+                    "Begin with C major scale, one octave (C3 to C4)",
                     "Use 'ah' vowel sound throughout",
                     "Maintain steady tempo (quarter note = 60)",
-                    "Focus on even tone quality",
-                    "Keep jaw relaxed and tongue forward"
+                    "Focus on even tone quality in lower register",
+                    "Keep jaw relaxed and tongue forward",
+                    "Pay attention to breath support in lower notes"
                 ],
-                musical_notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4"]
+                musical_notes: ["C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4", "B3", "A3", "G3", "F3", "E3", "D3", "C3"]
             },
             {
                 id: "exercise_2", 
-                title: "Exercise 2 - Arpeggio Studies",
+                title: "Exercise 2 - Arpeggio Studies (Tenor Range)",
                 difficulty: "intermediate",
-                text_content: "C major arpeggio patterns in various rhythms. Develop smooth legato technique and breath control for sustained phrases.",
+                text_content: "C major arpeggio patterns in tenor range. Develop smooth legato technique and breath control for sustained phrases. Essential for tenor passaggio work.",
                 instructions: [
-                    "Practice C major arpeggio: C-E-G-C-G-E-C",
+                    "Practice C major arpeggio: C3-E3-G3-C4-G3-E3-C3",
                     "Use legato technique (smooth connections)",
                     "Focus on breath support for long phrases",
+                    "Pay special attention to the passaggio area (F3-A3)",
                     "Practice with different vowel sounds",
                     "Gradually increase tempo"
                 ],
-                musical_notes: ["C4", "E4", "G4", "C5", "G4", "E4", "C4"]
+                musical_notes: ["C3", "E3", "G3", "C4", "G3", "E3", "C3"]
             },
             {
                 id: "exercise_3",
-                title: "Exercise 3 - Chromatic Scales",
+                title: "Exercise 3 - Chromatic Scales (Tenor Range)",
                 difficulty: "intermediate",
-                text_content: "Chromatic scale practice for finger dexterity and pitch accuracy. Essential for developing vocal flexibility and intonation.",
+                text_content: "Chromatic scale practice in tenor range. Essential for developing vocal flexibility and intonation, especially through the passaggio.",
                 instructions: [
-                    "Start with C chromatic scale ascending",
+                    "Start with C chromatic scale ascending (C3 to C4)",
                     "Use 'ee' vowel for clarity",
-                    "Focus on pitch accuracy",
-                    "Practice slowly at first",
-                    "Use piano for reference"
+                    "Focus on pitch accuracy through passaggio",
+                    "Practice slowly at first, especially F3-A3 area",
+                    "Use piano for reference",
+                    "Pay attention to register transitions"
                 ],
-                musical_notes: ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4", "C5"]
+                musical_notes: ["C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3", "C4"]
             },
             {
                 id: "exercise_4",
-                title: "Exercise 4 - Breath Control",
+                title: "Exercise 4 - Breath Control (Tenor Range)",
                 difficulty: "beginner",
-                text_content: "Long sustained notes with crescendo and diminuendo. Build breath stamina and control for sustained singing.",
+                text_content: "Long sustained notes in tenor range with crescendo and diminuendo. Build breath stamina and control for sustained singing.",
                 instructions: [
-                    "Sustain a comfortable note for 8 counts",
+                    "Sustain a comfortable note for 8 counts (try F3 or G3)",
                     "Crescendo for 4 counts, diminuendo for 4",
                     "Use 'ah' vowel sound",
                     "Focus on steady air flow",
-                    "Keep throat relaxed"
+                    "Keep throat relaxed",
+                    "Work on appoggio technique (breath support)"
                 ],
-                musical_notes: ["F4", "F4", "F4", "F4", "F4", "F4", "F4", "F4"]
+                musical_notes: ["F3", "F3", "F3", "F3", "F3", "F3", "F3", "F3"]
             },
             {
                 id: "exercise_5",
-                title: "Exercise 5 - Interval Training",
+                title: "Exercise 5 - Interval Training (Tenor Range)",
                 difficulty: "intermediate",
-                text_content: "Perfect fourths and fifths practice. Develop pitch accuracy and ear training for better intonation.",
+                text_content: "Perfect fourths and fifths practice in tenor range. Develop pitch accuracy and ear training for better intonation.",
                 instructions: [
-                    "Practice perfect fourth: C-F, D-G, E-A, F-Bb",
-                    "Practice perfect fifth: C-G, D-A, E-B, F-C",
+                    "Practice perfect fourth: C3-F3, D3-G3, E3-A3, F3-Bb3",
+                    "Practice perfect fifth: C3-G3, D3-A3, E3-B3, F3-C4",
                     "Use 'ah' vowel",
                     "Listen carefully to intervals",
-                    "Use piano for reference"
+                    "Use piano for reference",
+                    "Focus on passaggio area intervals"
                 ],
-                musical_notes: ["C4", "F4", "D4", "G4", "E4", "A4", "F4", "Bb4"]
+                musical_notes: ["C3", "F3", "D3", "G3", "E3", "A3", "F3", "Bb3"]
             },
             {
                 id: "exercise_6",
-                title: "Exercise 6 - Coloratura Passages",
+                title: "Exercise 6 - Tenor Passaggio Work",
                 difficulty: "advanced",
-                text_content: "Rapid scale passages with ornamentation. Develop vocal agility and precision for coloratura singing.",
+                text_content: "Specialized exercises for tenor passaggio (F3-A3). Develop smooth register transitions and mixed voice technique.",
                 instructions: [
-                    "Practice rapid scale passages",
-                    "Start slowly, gradually increase speed",
-                    "Focus on precision over speed",
-                    "Use different vowel sounds",
-                    "Maintain breath control throughout"
+                    "Focus on F3-A3 area (tenor passaggio)",
+                    "Practice smooth transitions between registers",
+                    "Use 'ah' vowel, then try 'oh' and 'oo'",
+                    "Start slowly, focus on evenness",
+                    "Work on mixed voice technique",
+                    "Avoid chest voice pushing in upper passaggio"
                 ],
-                musical_notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"]
+                musical_notes: ["F3", "G3", "A3", "G3", "F3", "E3", "F3", "G3", "A3", "Bb3", "A3", "G3", "F3"]
             },
             {
                 id: "exercise_7",
-                title: "Exercise 7 - Vowel Modification",
-                difficulty: "intermediate",
-                text_content: "Practice different vowel sounds on the same pitch. Develop vowel clarity and consistency across vocal range.",
+                title: "Exercise 7 - Tenor High Notes",
+                difficulty: "advanced",
+                text_content: "Exercises for developing tenor high notes (C4-F4). Focus on proper placement and breath support.",
                 instructions: [
-                    "Sustain one note with different vowels",
-                    "Practice: ah, eh, ee, oh, oo",
-                    "Keep pitch consistent",
-                    "Focus on vowel clarity",
-                    "Maintain relaxed jaw position"
+                    "Practice ascending to high notes carefully",
+                    "Use 'ah' vowel, then modify to 'oh' for higher notes",
+                    "Focus on breath support, not throat tension",
+                    "Start with comfortable high notes",
+                    "Work on consistent tone quality",
+                    "Use piano for reference"
                 ],
-                musical_notes: ["F4", "F4", "F4", "F4", "F4"]
+                musical_notes: ["C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4", "D4", "E4", "F4"]
             },
             {
                 id: "exercise_8",
-                title: "Exercise 8 - Staccato Practice",
+                title: "Exercise 8 - Tenor Legato Lines",
                 difficulty: "intermediate",
-                text_content: "Short, detached notes for developing vocal precision and breath control. Essential for articulation.",
+                text_content: "Smooth legato phrases in tenor range. Develop breath control and phrase shaping for lyrical singing.",
+                instructions: [
+                    "Practice smooth, connected phrases",
+                    "Use legato technique throughout",
+                    "Focus on breath support for long phrases",
+                    "Shape phrases with dynamics",
+                    "Use 'ah' and 'oh' vowels",
+                    "Work on even tone production"
+                ],
+                musical_notes: ["C3", "E3", "G3", "C4", "A3", "F3", "D3", "C3"]
+            },
+            {
+                id: "exercise_9",
+                title: "Exercise 9 - Tenor Staccato Practice",
+                difficulty: "intermediate",
+                text_content: "Short, detached notes in tenor range. Develop vocal precision and breath control for articulation.",
                 instructions: [
                     "Practice short, detached notes",
                     "Use 'ah' vowel",
                     "Focus on clean attacks",
                     "Maintain steady tempo",
-                    "Keep breath support active"
+                    "Keep breath support active",
+                    "Work on evenness across range"
                 ],
-                musical_notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"]
+                musical_notes: ["C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4"]
+            },
+            {
+                id: "exercise_10",
+                title: "Exercise 10 - Tenor Vowel Modification",
+                difficulty: "intermediate",
+                text_content: "Practice different vowel sounds in tenor range. Develop vowel clarity and consistency across registers.",
+                instructions: [
+                    "Sustain one note with different vowels",
+                    "Practice: ah, eh, ee, oh, oo",
+                    "Keep pitch consistent",
+                    "Focus on vowel clarity",
+                    "Work through passaggio area",
+                    "Maintain relaxed jaw position"
+                ],
+                musical_notes: ["F3", "F3", "F3", "F3", "F3"]
             }
         ];
 

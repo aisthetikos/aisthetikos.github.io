@@ -149,8 +149,8 @@ class FarinelliBreathingExercise {
             this.updateProgress();
             
             if (this.currentCount <= this.maxCount) {
-                // Seamless transition to next cycle
-                await this.runCycle();
+                // Continue to next cycle immediately (seamless)
+                setTimeout(() => this.runCycle(), 0);
             } else {
                 // Exercise complete
                 this.completeExercise();

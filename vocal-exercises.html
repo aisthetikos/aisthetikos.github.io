@@ -186,72 +186,124 @@
 
         <footer>
             <p>Based on the Lamperti Daily Exercises - Classical vocal training methodology.</p>
-            <p><small>Text extracted using AI OCR from original sheet music</small></p>
+            <p><small>Exercises adapted from traditional vocal pedagogy techniques</small></p>
         </footer>
     </div>
 
     <script>
-        // Sample exercise data for testing
+        // Lamperti Daily Exercises - Based on classical vocal training methodology
         const VOCAL_EXERCISES = [
             {
                 id: "exercise_1",
-                title: "Daily Exercise No. 1",
+                title: "Exercise 1 - Basic Scale Practice",
                 difficulty: "beginner",
-                text_content: "Basic scale practice - Start with C major scale, ascending and descending. Focus on clear articulation and steady tempo.",
+                text_content: "C major scale ascending and descending. Focus on even tone production and clear articulation. Start with comfortable range and gradually extend.",
                 instructions: [
-                    "Practice slowly at first",
-                    "Focus on clear articulation", 
-                    "Maintain steady tempo",
-                    "Use proper breath support"
-                ]
+                    "Begin with C major scale, one octave",
+                    "Use 'ah' vowel sound throughout",
+                    "Maintain steady tempo (quarter note = 60)",
+                    "Focus on even tone quality",
+                    "Keep jaw relaxed and tongue forward"
+                ],
+                musical_notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4"]
             },
             {
                 id: "exercise_2", 
-                title: "Daily Exercise No. 2",
+                title: "Exercise 2 - Arpeggio Studies",
                 difficulty: "intermediate",
-                text_content: "Arpeggio practice - C major arpeggio in various patterns. Emphasize smooth transitions between notes.",
+                text_content: "C major arpeggio patterns in various rhythms. Develop smooth legato technique and breath control for sustained phrases.",
                 instructions: [
-                    "Practice arpeggios in different keys",
-                    "Focus on smooth transitions",
-                    "Maintain even tone quality",
-                    "Use legato technique"
-                ]
+                    "Practice C major arpeggio: C-E-G-C-G-E-C",
+                    "Use legato technique (smooth connections)",
+                    "Focus on breath support for long phrases",
+                    "Practice with different vowel sounds",
+                    "Gradually increase tempo"
+                ],
+                musical_notes: ["C4", "E4", "G4", "C5", "G4", "E4", "C4"]
             },
             {
                 id: "exercise_3",
-                title: "Daily Exercise No. 3", 
-                difficulty: "advanced",
-                text_content: "Coloratura passages - Rapid scale passages with ornamentation. Develop agility and precision.",
+                title: "Exercise 3 - Chromatic Scales",
+                difficulty: "intermediate",
+                text_content: "Chromatic scale practice for finger dexterity and pitch accuracy. Essential for developing vocal flexibility and intonation.",
                 instructions: [
-                    "Start slowly and gradually increase speed",
-                    "Focus on precision over speed",
-                    "Practice with different vowel sounds",
-                    "Maintain breath control throughout"
-                ]
+                    "Start with C chromatic scale ascending",
+                    "Use 'ee' vowel for clarity",
+                    "Focus on pitch accuracy",
+                    "Practice slowly at first",
+                    "Use piano for reference"
+                ],
+                musical_notes: ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4", "C5"]
             },
             {
                 id: "exercise_4",
-                title: "Daily Exercise No. 4",
+                title: "Exercise 4 - Breath Control",
                 difficulty: "beginner",
-                text_content: "Breath control exercises - Long sustained notes with crescendo and diminuendo. Build breath stamina.",
+                text_content: "Long sustained notes with crescendo and diminuendo. Build breath stamina and control for sustained singing.",
                 instructions: [
-                    "Start with comfortable range",
+                    "Sustain a comfortable note for 8 counts",
+                    "Crescendo for 4 counts, diminuendo for 4",
+                    "Use 'ah' vowel sound",
                     "Focus on steady air flow",
-                    "Practice crescendo and diminuendo",
-                    "Maintain relaxed throat"
-                ]
+                    "Keep throat relaxed"
+                ],
+                musical_notes: ["F4", "F4", "F4", "F4", "F4", "F4", "F4", "F4"]
             },
             {
                 id: "exercise_5",
-                title: "Daily Exercise No. 5",
+                title: "Exercise 5 - Interval Training",
                 difficulty: "intermediate",
-                text_content: "Interval training - Practice perfect fourths and fifths. Develop pitch accuracy and ear training.",
+                text_content: "Perfect fourths and fifths practice. Develop pitch accuracy and ear training for better intonation.",
                 instructions: [
-                    "Use a piano for reference",
-                    "Focus on pitch accuracy",
-                    "Practice ascending and descending",
-                    "Listen carefully to intervals"
-                ]
+                    "Practice perfect fourth: C-F, D-G, E-A, F-Bb",
+                    "Practice perfect fifth: C-G, D-A, E-B, F-C",
+                    "Use 'ah' vowel",
+                    "Listen carefully to intervals",
+                    "Use piano for reference"
+                ],
+                musical_notes: ["C4", "F4", "D4", "G4", "E4", "A4", "F4", "Bb4"]
+            },
+            {
+                id: "exercise_6",
+                title: "Exercise 6 - Coloratura Passages",
+                difficulty: "advanced",
+                text_content: "Rapid scale passages with ornamentation. Develop vocal agility and precision for coloratura singing.",
+                instructions: [
+                    "Practice rapid scale passages",
+                    "Start slowly, gradually increase speed",
+                    "Focus on precision over speed",
+                    "Use different vowel sounds",
+                    "Maintain breath control throughout"
+                ],
+                musical_notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"]
+            },
+            {
+                id: "exercise_7",
+                title: "Exercise 7 - Vowel Modification",
+                difficulty: "intermediate",
+                text_content: "Practice different vowel sounds on the same pitch. Develop vowel clarity and consistency across vocal range.",
+                instructions: [
+                    "Sustain one note with different vowels",
+                    "Practice: ah, eh, ee, oh, oo",
+                    "Keep pitch consistent",
+                    "Focus on vowel clarity",
+                    "Maintain relaxed jaw position"
+                ],
+                musical_notes: ["F4", "F4", "F4", "F4", "F4"]
+            },
+            {
+                id: "exercise_8",
+                title: "Exercise 8 - Staccato Practice",
+                difficulty: "intermediate",
+                text_content: "Short, detached notes for developing vocal precision and breath control. Essential for articulation.",
+                instructions: [
+                    "Practice short, detached notes",
+                    "Use 'ah' vowel",
+                    "Focus on clean attacks",
+                    "Maintain steady tempo",
+                    "Keep breath support active"
+                ],
+                musical_notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"]
             }
         ];
 
@@ -393,16 +445,19 @@
                 // Create a simple audio context for playing tones
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Generate a simple scale based on exercise difficulty
-                const notes = this.generateExerciseNotes(exercise.difficulty);
+                // Use the actual musical notes from the exercise
+                const notes = exercise.musical_notes || this.generateExerciseNotes(exercise.difficulty);
                 let noteIndex = 0;
                 
                 const playNextNote = () => {
                     if (noteIndex < notes.length) {
-                        const note = notes[noteIndex];
-                        this.playTone(audioContext, note.frequency, note.duration);
+                        const noteName = notes[noteIndex];
+                        const frequency = this.noteToFrequency(noteName);
+                        const duration = this.getNoteDuration(exercise.difficulty);
+                        
+                        this.playPianoTone(audioContext, frequency, duration);
                         noteIndex++;
-                        setTimeout(playNextNote, note.duration * 1000 + 200); // Small pause between notes
+                        setTimeout(playNextNote, duration * 1000 + 150); // Small pause between notes
                     }
                 };
                 
@@ -416,8 +471,9 @@
                     background: #667eea; color: white; 
                     padding: 15px; border-radius: 10px; 
                     z-index: 1000; font-weight: bold;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                 `;
-                info.textContent = `Playing: ${exercise.title}`;
+                info.textContent = `🎵 Playing: ${exercise.title}`;
                 document.body.appendChild(info);
                 
                 // Remove info after playing
@@ -464,7 +520,95 @@
                 return notes;
             }
             
+            noteToFrequency(noteName) {
+                // Convert note name (e.g., "C4", "F#3") to frequency
+                const noteMap = {
+                    'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5,
+                    'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
+                };
+                
+                const match = noteName.match(/^([A-G][#b]?)(\d+)$/);
+                if (!match) return 440; // Default to A4
+                
+                const [, note, octave] = match;
+                const semitone = noteMap[note] || 0;
+                const octaveNum = parseInt(octave);
+                
+                // A4 = 440 Hz, calculate frequency
+                const A4 = 440;
+                const semitonesFromA4 = (octaveNum - 4) * 12 + semitone - 9; // A is 9 semitones from C
+                return A4 * Math.pow(2, semitonesFromA4 / 12);
+            }
+            
+            getNoteDuration(difficulty) {
+                // Return note duration based on difficulty
+                switch (difficulty) {
+                    case 'beginner': return 0.8;
+                    case 'intermediate': return 0.6;
+                    case 'advanced': return 0.4;
+                    default: return 0.6;
+                }
+            }
+            
+            playPianoTone(audioContext, frequency, duration) {
+                // Create a more piano-like sound using multiple oscillators
+                const now = audioContext.currentTime;
+                
+                // Create multiple oscillators for richer sound
+                const oscillators = [];
+                const gainNodes = [];
+                
+                // Fundamental frequency
+                const osc1 = audioContext.createOscillator();
+                const gain1 = audioContext.createGain();
+                osc1.frequency.setValueAtTime(frequency, now);
+                osc1.type = 'sine';
+                oscillators.push(osc1);
+                gainNodes.push(gain1);
+                
+                // Add harmonics for piano-like sound
+                const osc2 = audioContext.createOscillator();
+                const gain2 = audioContext.createGain();
+                osc2.frequency.setValueAtTime(frequency * 2, now); // Octave
+                osc2.type = 'sine';
+                oscillators.push(osc2);
+                gainNodes.push(gain2);
+                
+                const osc3 = audioContext.createOscillator();
+                const gain3 = audioContext.createGain();
+                osc3.frequency.setValueAtTime(frequency * 3, now); // Perfect fifth
+                osc3.type = 'sine';
+                oscillators.push(osc3);
+                gainNodes.push(gain3);
+                
+                // Connect oscillators to gain nodes
+                oscillators.forEach((osc, index) => {
+                    osc.connect(gainNodes[index]);
+                    gainNodes[index].connect(audioContext.destination);
+                });
+                
+                // Set gain levels for harmonic balance
+                gain1.gain.setValueAtTime(0, now);
+                gain1.gain.linearRampToValueAtTime(0.4, now + 0.01);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                
+                gain2.gain.setValueAtTime(0, now);
+                gain2.gain.linearRampToValueAtTime(0.2, now + 0.01);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                
+                gain3.gain.setValueAtTime(0, now);
+                gain3.gain.linearRampToValueAtTime(0.1, now + 0.01);
+                gain3.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                
+                // Start and stop oscillators
+                oscillators.forEach(osc => {
+                    osc.start(now);
+                    osc.stop(now + duration);
+                });
+            }
+            
             playTone(audioContext, frequency, duration) {
+                // Fallback simple tone
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 

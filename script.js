@@ -29,6 +29,7 @@ class FarinelliBreathingExercise {
         this.startBtn = document.getElementById('startBtn');
         this.pauseBtn = document.getElementById('pauseBtn');
         this.stopBtn = document.getElementById('stopBtn');
+        this.testBtn = document.getElementById('testBtn');
         this.startingCountInput = document.getElementById('startingCount');
         this.maxCountInput = document.getElementById('maxCount');
         this.currentPhaseElement = document.getElementById('currentPhase');
@@ -42,6 +43,7 @@ class FarinelliBreathingExercise {
         this.startBtn.addEventListener('click', () => this.start());
         this.pauseBtn.addEventListener('click', () => this.pause());
         this.stopBtn.addEventListener('click', () => this.stop());
+        this.testBtn.addEventListener('click', () => this.testAudio());
         
         this.startingCountInput.addEventListener('change', () => {
             this.startingCount = parseInt(this.startingCountInput.value);
@@ -248,13 +250,47 @@ class FarinelliBreathingExercise {
         oscillator.frequency.setValueAtTime(this.metronomeFrequency, this.audioContext.currentTime);
         oscillator.type = 'sine';
         
-        // Very gentle, short tick
+        // Louder, more audible tick
         gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.03, this.audioContext.currentTime + 0.01);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.1);
+        gainNode.gain.linearRampToValueAtTime(0.08, this.audioContext.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.15);
         
         oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.1);
+        oscillator.stop(this.audioContext.currentTime + 0.15);
+    }
+    
+    testAudio() {
+        // Initialize audio context if needed
+        if (!this.audioContext) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        // Test all sounds
+        console.log('Testing audio...');
+        
+        // Test metronome tick
+        setTimeout(() => {
+            console.log('Playing metronome tick...');
+            this.playMetronomeTick();
+        }, 100);
+        
+        // Test inhale chime
+        setTimeout(() => {
+            console.log('Playing inhale chime...');
+            this.playChime('inhale');
+        }, 500);
+        
+        // Test hold chime
+        setTimeout(() => {
+            console.log('Playing hold chime...');
+            this.playChime('hold');
+        }, 1500);
+        
+        // Test exhale chime
+        setTimeout(() => {
+            console.log('Playing exhale chime...');
+            this.playChime('exhale');
+        }, 2500);
     }
     
     sleep(ms) {

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lamperti Vocal Exercises</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .exercise-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #667eea;
+        }
+        
+        .exercise-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .exercise-difficulty {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .difficulty-beginner {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .difficulty-intermediate {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .difficulty-advanced {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .exercise-content {
+            margin-bottom: 20px;
+        }
+        
+        .exercise-text {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .exercise-instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #2196f3;
+        }
+        
+        .exercise-instructions h4 {
+            margin: 0 0 10px 0;
+            color: #1976d2;
+            font-size: 1rem;
+        }
+        
+        .exercise-instructions ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .exercise-instructions li {
+            margin-bottom: 5px;
+            color: #424242;
+        }
+        
+        .exercise-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .filters {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .filter-group select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .stats span {
+            font-weight: 600;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lamperti Vocal Exercises</h1>
+            <p class="subtitle">Classical vocal training exercises extracted from sheet music</p>
+        </header>
+
+        <div class="stats">
+            <span id="totalExercises">0</span> exercises available | 
+            <span id="filteredCount">0</span> showing
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="difficultyFilter">Difficulty:</label>
+                <select id="difficultyFilter">
+                    <option value="all">All Levels</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+                
+                <label for="searchInput">Search:</label>
+                <input type="text" id="searchInput" placeholder="Search exercises..." 
+                       style="padding: 8px 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 0.9rem;">
+            </div>
+        </div>
+
+        <div id="exercisesContainer">
+            <!-- Exercises will be loaded here -->
+        </div>
+
+        <div class="instructions">
+            <h3>How to Use:</h3>
+            <ol>
+                <li><strong>Browse exercises</strong> - Use filters to find exercises by difficulty</li>
+                <li><strong>Read the content</strong> - Each exercise shows extracted text from the original sheet music</li>
+                <li><strong>Follow instructions</strong> - Practice according to the exercise guidelines</li>
+                <li><strong>Practice regularly</strong> - These are daily exercises designed for consistent practice</li>
+            </ol>
+        </div>
+
+        <footer>
+            <p>Based on the Lamperti Daily Exercises - Classical vocal training methodology.</p>
+            <p><small>Text extracted using AI OCR from original sheet music</small></p>
+        </footer>
+    </div>
+
+    <!-- Include the generated vocal exercises data -->
+    <script src="web_exercises/vocal_exercises.js"></script>
+    <script>
+        class VocalExerciseApp {
+            constructor() {
+                this.exercises = VOCAL_EXERCISES || [];
+                this.filteredExercises = [...this.exercises];
+                this.initializeElements();
+                this.setupEventListeners();
+                this.renderExercises();
+                this.updateStats();
+            }
+            
+            initializeElements() {
+                this.exercisesContainer = document.getElementById('exercisesContainer');
+                this.difficultyFilter = document.getElementById('difficultyFilter');
+                this.searchInput = document.getElementById('searchInput');
+                this.totalExercisesSpan = document.getElementById('totalExercises');
+                this.filteredCountSpan = document.getElementById('filteredCount');
+            }
+            
+            setupEventListeners() {
+                this.difficultyFilter.addEventListener('change', () => this.filterExercises());
+                this.searchInput.addEventListener('input', () => this.filterExercises());
+            }
+            
+            filterExercises() {
+                const difficulty = this.difficultyFilter.value;
+                const searchTerm = this.searchInput.value.toLowerCase();
+                
+                this.filteredExercises = this.exercises.filter(exercise => {
+                    const matchesDifficulty = difficulty === 'all' || exercise.difficulty === difficulty;
+                    const matchesSearch = !searchTerm || 
+                        exercise.title.toLowerCase().includes(searchTerm) ||
+                        exercise.text_content.toLowerCase().includes(searchTerm) ||
+                        exercise.instructions.some(inst => inst.toLowerCase().includes(searchTerm));
+                    
+                    return matchesDifficulty && matchesSearch;
+                });
+                
+                this.renderExercises();
+                this.updateStats();
+            }
+            
+            renderExercises() {
+                if (this.filteredExercises.length === 0) {
+                    this.exercisesContainer.innerHTML = `
+                        <div class="exercise-card">
+                            <h3>No exercises found</h3>
+                            <p>Try adjusting your filters or search terms.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                this.exercisesContainer.innerHTML = this.filteredExercises.map(exercise => 
+                    this.createExerciseCard(exercise)
+                ).join('');
+            }
+            
+            createExerciseCard(exercise) {
+                const difficultyClass = `difficulty-${exercise.difficulty}`;
+                
+                return `
+                    <div class="exercise-card">
+                        <div class="exercise-title">${exercise.title || 'Lamperti Exercise'}</div>
+                        <div class="exercise-difficulty ${difficultyClass}">
+                            ${exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1)}
+                        </div>
+                        
+                        <div class="exercise-content">
+                            ${exercise.text_content ? `
+                                <div class="exercise-text">
+                                    <strong>Extracted Content:</strong><br>
+                                    ${exercise.text_content}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="exercise-instructions">
+                                <h4>Practice Instructions:</h4>
+                                <ul>
+                                    ${exercise.instructions.map(instruction => 
+                                        `<li>${instruction}</li>`
+                                    ).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="exercise-controls">
+                            <button class="btn btn-small primary" onclick="this.playExercise('${exercise.id}')">
+                                Play Audio
+                            </button>
+                            <button class="btn btn-small secondary" onclick="this.showDetails('${exercise.id}')">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            updateStats() {
+                this.totalExercisesSpan.textContent = this.exercises.length;
+                this.filteredCountSpan.textContent = this.filteredExercises.length;
+            }
+            
+            playExercise(exerciseId) {
+                const exercise = this.exercises.find(e => e.id === exerciseId);
+                if (exercise) {
+                    // This would integrate with your audio system
+                    alert(`Playing exercise: ${exercise.title}\n\nNote: Audio playback integration needed`);
+                }
+            }
+            
+            showDetails(exerciseId) {
+                const exercise = this.exercises.find(e => e.id === exerciseId);
+                if (exercise) {
+                    const details = `
+Exercise ID: ${exercise.id}
+Title: ${exercise.title}
+Difficulty: ${exercise.difficulty}
+Category: ${exercise.category}
+Tempo: ${exercise.audio?.tempo || 'Not specified'} BPM
+Key: ${exercise.audio?.key_signature || 'Not specified'}
+Time Signature: ${exercise.audio?.time_signature || 'Not specified'}
+                    `;
+                    alert(details);
+                }
+            }
+        }
+        
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new VocalExerciseApp();
+        });
+    </script>
+</body>
+</html>

@@ -1,180 +1,324 @@
-#!/usr/bin/env python3
-"""
-Web Integration Script
-Converts extracted exercise data into web app format
-"""
-
-import json
-import os
-from pathlib import Path
-from typing import List, Dict, Any
-
-class WebAppIntegrator:
-    """Converts extracted exercise data to web app format"""
-    
-    def __init__(self, extracted_data_path: str = "extracted_exercises"):
-        self.extracted_path = Path(extracted_data_path)
-        self.web_output_path = Path("web_exercises")
-        self.web_output_path.mkdir(exist_ok=True)
-    
-    def load_extracted_data(self) -> List[Dict[str, Any]]:
-        """Load all extracted exercise data"""
-        all_exercises_file = self.extracted_path / "all_exercises.json"
-        
-        if not all_exercises_file.exists():
-            raise FileNotFoundError(f"No extracted data found at {all_exercises_file}")
-        
-        with open(all_exercises_file, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    
-    def create_exercise_audio_data(self, exercise: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate audio data for web app playback"""
-        # This is a simplified version - in practice, you'd use the actual musical notation
-        # to generate proper audio sequences
-        
-        audio_data = {
-            "tempo": exercise.get("tempo", 120),
-            "time_signature": exercise.get("time_signature", "4/4"),
-            "key_signature": exercise.get("key_signature", "C major"),
-            "notes": self._generate_sample_notes(exercise),
-            "duration": 30,  # seconds
-            "loop": True
+        <header>
+            <h1>Lamperti Vocal Exercises</h1>
+            <p class="subtitle">Classical vocal training exercises extracted from sheet music</p>
+            
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Breathing Exercise</a>
+                <a href="vocal-exercises.html" class="nav-link active">Vocal Exercises</a>
+            </nav>
+        </header>w: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #667eea;
         }
         
-        return audio_data
-    
-    def _generate_sample_notes(self, exercise: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Generate sample note sequence for the exercise"""
-        # This creates a basic scale pattern - replace with actual extracted notes
-        difficulty = exercise.get("difficulty", "beginner")
+        .exercise-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
         
-        if difficulty == "beginner":
-            # Simple C major scale
-            notes = [
-                {"note": "C4", "duration": 1, "type": "quarter"},
-                {"note": "D4", "duration": 1, "type": "quarter"},
-                {"note": "E4", "duration": 1, "type": "quarter"},
-                {"note": "F4", "duration": 1, "type": "quarter"},
-                {"note": "G4", "duration": 1, "type": "quarter"},
-                {"note": "A4", "duration": 1, "type": "quarter"},
-                {"note": "B4", "duration": 1, "type": "quarter"},
-                {"note": "C5", "duration": 2, "type": "half"},
-            ]
-        elif difficulty == "intermediate":
-            # Arpeggio pattern
-            notes = [
-                {"note": "C4", "duration": 0.5, "type": "eighth"},
-                {"note": "E4", "duration": 0.5, "type": "eighth"},
-                {"note": "G4", "duration": 0.5, "type": "eighth"},
-                {"note": "C5", "duration": 0.5, "type": "eighth"},
-                {"note": "G4", "duration": 0.5, "type": "eighth"},
-                {"note": "E4", "duration": 0.5, "type": "eighth"},
-                {"note": "C4", "duration": 1, "type": "quarter"},
-            ]
-        else:  # advanced
-            # Complex pattern
-            notes = [
-                {"note": "C4", "duration": 0.25, "type": "sixteenth"},
-                {"note": "D4", "duration": 0.25, "type": "sixteenth"},
-                {"note": "E4", "duration": 0.25, "type": "sixteenth"},
-                {"note": "F4", "duration": 0.25, "type": "sixteenth"},
-                {"note": "G4", "duration": 0.5, "type": "eighth"},
-                {"note": "A4", "duration": 0.5, "type": "eighth"},
-                {"note": "B4", "duration": 0.5, "type": "eighth"},
-                {"note": "C5", "duration": 1, "type": "quarter"},
-            ]
+        .exercise-difficulty {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
         
-        return notes
-    
-    def create_web_exercise(self, exercise: Dict[str, Any]) -> Dict[str, Any]:
-        """Convert extracted exercise to web app format"""
-        web_exercise = {
-            "id": exercise.get("id", f"exercise_{hash(exercise.get('title', ''))}"),
-            "title": exercise.get("title", "Lamperti Exercise"),
-            "description": exercise.get("description", ""),
-            "difficulty": exercise.get("difficulty", "beginner"),
-            "category": "vocal_exercises",
-            "instructions": [
-                "Follow the audio guide",
-                "Maintain steady tempo",
-                "Focus on clear articulation",
-                "Practice slowly at first, then increase speed"
-            ],
-            "audio": self.create_exercise_audio_data(exercise),
-            "text_content": exercise.get("text_content", ""),
-            "metadata": {
-                "source": "Lamperti Daily Exercises",
-                "key_signature": exercise.get("key_signature", "C major"),
-                "time_signature": exercise.get("time_signature", "4/4"),
-                "tempo": exercise.get("tempo", 120),
-                "extracted_from": exercise.get("image_path", "")
+        .difficulty-beginner {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .difficulty-intermediate {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .difficulty-advanced {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .exercise-content {
+            margin-bottom: 20px;
+        }
+        
+        .exercise-text {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .exercise-instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #2196f3;
+        }
+        
+        .exercise-instructions h4 {
+            margin: 0 0 10px 0;
+            color: #1976d2;
+            font-size: 1rem;
+        }
+        
+        .exercise-instructions ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .exercise-instructions li {
+            margin-bottom: 5px;
+            color: #424242;
+        }
+        
+        .exercise-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .filters {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .filter-group select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .stats span {
+            font-weight: 600;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lamperti Vocal Exercises</h1>
+            <p class="subtitle">Classical vocal training exercises extracted from sheet music</p>
+            
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Breathing Exercise</a>
+                <a href="vocal-exercises.html" class="nav-link active">Vocal Exercises</a>
+            </nav>
+        </header>
+
+        <div class="stats">
+            <span id="totalExercises">0</span> exercises available | 
+            <span id="filteredCount">0</span> showing
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="difficultyFilter">Difficulty:</label>
+                <select id="difficultyFilter">
+                    <option value="all">All Levels</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+                
+                <label for="searchInput">Search:</label>
+                <input type="text" id="searchInput" placeholder="Search exercises..." 
+                       style="padding: 8px 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 0.9rem;">
+            </div>
+        </div>
+
+        <div id="exercisesContainer">
+            <!-- Exercises will be loaded here -->
+        </div>
+
+        <div class="instructions">
+            <h3>How to Use:</h3>
+            <ol>
+                <li><strong>Browse exercises</strong> - Use filters to find exercises by difficulty</li>
+                <li><strong>Read the content</strong> - Each exercise shows extracted text from the original sheet music</li>
+                <li><strong>Follow instructions</strong> - Practice according to the exercise guidelines</li>
+                <li><strong>Practice regularly</strong> - These are daily exercises designed for consistent practice</li>
+            </ol>
+        </div>
+
+        <footer>
+            <p>Based on the Lamperti Daily Exercises - Classical vocal training methodology.</p>
+            <p><small>Text extracted using AI OCR from original sheet music</small></p>
+        </footer>
+    </div>
+
+    <!-- Include the generated vocal exercises data -->
+    <script src="web_exercises/vocal_exercises.js"></script>
+    <script>
+        class VocalExerciseApp {
+            constructor() {
+                this.exercises = VOCAL_EXERCISES || [];
+                this.filteredExercises = [...this.exercises];
+                this.initializeElements();
+                this.setupEventListeners();
+                this.renderExercises();
+                this.updateStats();
+            }
+            
+            initializeElements() {
+                this.exercisesContainer = document.getElementById('exercisesContainer');
+                this.difficultyFilter = document.getElementById('difficultyFilter');
+                this.searchInput = document.getElementById('searchInput');
+                this.totalExercisesSpan = document.getElementById('totalExercises');
+                this.filteredCountSpan = document.getElementById('filteredCount');
+            }
+            
+            setupEventListeners() {
+                this.difficultyFilter.addEventListener('change', () => this.filterExercises());
+                this.searchInput.addEventListener('input', () => this.filterExercises());
+            }
+            
+            filterExercises() {
+                const difficulty = this.difficultyFilter.value;
+                const searchTerm = this.searchInput.value.toLowerCase();
+                
+                this.filteredExercises = this.exercises.filter(exercise => {
+                    const matchesDifficulty = difficulty === 'all' || exercise.difficulty === difficulty;
+                    const matchesSearch = !searchTerm || 
+                        exercise.title.toLowerCase().includes(searchTerm) ||
+                        exercise.text_content.toLowerCase().includes(searchTerm) ||
+                        exercise.instructions.some(inst => inst.toLowerCase().includes(searchTerm));
+                    
+                    return matchesDifficulty && matchesSearch;
+                });
+                
+                this.renderExercises();
+                this.updateStats();
+            }
+            
+            renderExercises() {
+                if (this.filteredExercises.length === 0) {
+                    this.exercisesContainer.innerHTML = `
+                        <div class="exercise-card">
+                            <h3>No exercises found</h3>
+                            <p>Try adjusting your filters or search terms.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                this.exercisesContainer.innerHTML = this.filteredExercises.map(exercise => 
+                    this.createExerciseCard(exercise)
+                ).join('');
+            }
+            
+            createExerciseCard(exercise) {
+                const difficultyClass = `difficulty-${exercise.difficulty}`;
+                
+                return `
+                    <div class="exercise-card">
+                        <div class="exercise-title">${exercise.title || 'Lamperti Exercise'}</div>
+                        <div class="exercise-difficulty ${difficultyClass}">
+                            ${exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1)}
+                        </div>
+                        
+                        <div class="exercise-content">
+                            ${exercise.text_content ? `
+                                <div class="exercise-text">
+                                    <strong>Extracted Content:</strong><br>
+                                    ${exercise.text_content}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="exercise-instructions">
+                                <h4>Practice Instructions:</h4>
+                                <ul>
+                                    ${exercise.instructions.map(instruction => 
+                                        `<li>${instruction}</li>`
+                                    ).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="exercise-controls">
+                            <button class="btn btn-small primary" onclick="this.playExercise('${exercise.id}')">
+                                Play Audio
+                            </button>
+                            <button class="btn btn-small secondary" onclick="this.showDetails('${exercise.id}')">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            updateStats() {
+                this.totalExercisesSpan.textContent = this.exercises.length;
+                this.filteredCountSpan.textContent = this.filteredExercises.length;
+            }
+            
+            playExercise(exerciseId) {
+                const exercise = this.exercises.find(e => e.id === exerciseId);
+                if (exercise) {
+                    // This would integrate with your audio system
+                    alert(`Playing exercise: ${exercise.title}\n\nNote: Audio playback integration needed`);
+                }
+            }
+            
+            showDetails(exerciseId) {
+                const exercise = this.exercises.find(e => e.id === exerciseId);
+                if (exercise) {
+                    const details = `
+Exercise ID: ${exercise.id}
+Title: ${exercise.title}
+Difficulty: ${exercise.difficulty}
+Category: ${exercise.category}
+Tempo: ${exercise.audio?.tempo || 'Not specified'} BPM
+Key: ${exercise.audio?.key_signature || 'Not specified'}
+Time Signature: ${exercise.audio?.time_signature || 'Not specified'}
+                    `;
+                    alert(details);
+                }
             }
         }
         
-        return web_exercise
-    
-    def generate_web_exercises(self) -> List[Dict[str, Any]]:
-        """Generate all web exercises from extracted data"""
-        extracted_exercises = self.load_extracted_data()
-        web_exercises = []
-        
-        for exercise in extracted_exercises:
-            web_exercise = self.create_web_exercise(exercise)
-            web_exercises.append(web_exercise)
-        
-        return web_exercises
-    
-    def save_web_format(self, web_exercises: List[Dict[str, Any]]):
-        """Save web exercises in various formats"""
-        # Save complete exercises
-        exercises_file = self.web_output_path / "vocal_exercises.json"
-        with open(exercises_file, 'w', encoding='utf-8') as f:
-            json.dump(web_exercises, f, indent=2, ensure_ascii=False)
-        
-        # Save JavaScript format for direct inclusion
-        js_file = self.web_output_path / "vocal_exercises.js"
-        with open(js_file, 'w', encoding='utf-8') as f:
-            f.write("// Generated vocal exercises for web app\n")
-            f.write("const VOCAL_EXERCISES = ")
-            f.write(json.dumps(web_exercises, indent=2, ensure_ascii=False))
-            f.write(";\n\n")
-            f.write("// Export for use in web app\n")
-            f.write("if (typeof module !== 'undefined' && module.exports) {\n")
-            f.write("    module.exports = VOCAL_EXERCISES;\n")
-            f.write("}\n")
-        
-        # Save individual exercise files
-        for exercise in web_exercises:
-            exercise_file = self.web_output_path / f"{exercise['id']}.json"
-            with open(exercise_file, 'w', encoding='utf-8') as f:
-                json.dump(exercise, f, indent=2, ensure_ascii=False)
-        
-        print(f"SUCCESS - Generated {len(web_exercises)} web exercises")
-        print(f"Saved to: {self.web_output_path}")
-        print(f"Main file: {exercises_file}")
-        print(f"JS file: {js_file}")
-
-def main():
-    """Main function"""
-    print("Converting extracted exercises to web format...")
-    
-    integrator = WebAppIntegrator()
-    
-    try:
-        web_exercises = integrator.generate_web_exercises()
-        integrator.save_web_format(web_exercises)
-        
-        print("\nSUCCESS - Conversion complete!")
-        print("\nNext steps:")
-        print("1. Copy the generated files to your web app")
-        print("2. Include vocal_exercises.js in your HTML")
-        print("3. Use the exercise data to build your vocal exercise page")
-        
-    except FileNotFoundError as e:
-        print(f"ERROR: {e}")
-        print("Please run the music OCR app first to extract exercise data")
-    except Exception as e:
-        print(f"ERROR: {e}")
-
-if __name__ == "__main__":
-    main()
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new VocalExerciseApp();
+        });
+    </script>
+</body>
+</html>

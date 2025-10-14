@@ -190,9 +190,71 @@
         </footer>
     </div>
 
-    <!-- Include the generated vocal exercises data -->
-    <script src="./vocal_exercises.js"></script>
     <script>
+        // Sample exercise data for testing
+        const VOCAL_EXERCISES = [
+            {
+                id: "exercise_1",
+                title: "Daily Exercise No. 1",
+                difficulty: "beginner",
+                text_content: "Basic scale practice - Start with C major scale, ascending and descending. Focus on clear articulation and steady tempo.",
+                instructions: [
+                    "Practice slowly at first",
+                    "Focus on clear articulation", 
+                    "Maintain steady tempo",
+                    "Use proper breath support"
+                ]
+            },
+            {
+                id: "exercise_2", 
+                title: "Daily Exercise No. 2",
+                difficulty: "intermediate",
+                text_content: "Arpeggio practice - C major arpeggio in various patterns. Emphasize smooth transitions between notes.",
+                instructions: [
+                    "Practice arpeggios in different keys",
+                    "Focus on smooth transitions",
+                    "Maintain even tone quality",
+                    "Use legato technique"
+                ]
+            },
+            {
+                id: "exercise_3",
+                title: "Daily Exercise No. 3", 
+                difficulty: "advanced",
+                text_content: "Coloratura passages - Rapid scale passages with ornamentation. Develop agility and precision.",
+                instructions: [
+                    "Start slowly and gradually increase speed",
+                    "Focus on precision over speed",
+                    "Practice with different vowel sounds",
+                    "Maintain breath control throughout"
+                ]
+            },
+            {
+                id: "exercise_4",
+                title: "Daily Exercise No. 4",
+                difficulty: "beginner",
+                text_content: "Breath control exercises - Long sustained notes with crescendo and diminuendo. Build breath stamina.",
+                instructions: [
+                    "Start with comfortable range",
+                    "Focus on steady air flow",
+                    "Practice crescendo and diminuendo",
+                    "Maintain relaxed throat"
+                ]
+            },
+            {
+                id: "exercise_5",
+                title: "Daily Exercise No. 5",
+                difficulty: "intermediate",
+                text_content: "Interval training - Practice perfect fourths and fifths. Develop pitch accuracy and ear training.",
+                instructions: [
+                    "Use a piano for reference",
+                    "Focus on pitch accuracy",
+                    "Practice ascending and descending",
+                    "Listen carefully to intervals"
+                ]
+            }
+        ];
+
         class VocalExerciseApp {
             constructor() {
                 this.exercises = VOCAL_EXERCISES || [];
@@ -261,12 +323,10 @@
                         </div>
                         
                         <div class="exercise-content">
-                            ${exercise.text_content ? `
-                                <div class="exercise-text">
-                                    <strong>Extracted Content:</strong><br>
-                                    ${exercise.text_content}
-                                </div>
-                            ` : ''}
+                            <div class="exercise-text">
+                                <strong>Exercise Content:</strong><br>
+                                ${exercise.text_content || 'No content available'}
+                            </div>
                             
                             <div class="exercise-instructions">
                                 <h4>Practice Instructions:</h4>

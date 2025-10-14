@@ -310,6 +310,9 @@
                 this.exercisesContainer.innerHTML = this.filteredExercises.map(exercise => 
                     this.createExerciseCard(exercise)
                 ).join('');
+                
+                // Add event listeners to the new buttons
+                this.addButtonEventListeners();
             }
             
             createExerciseCard(exercise) {
@@ -339,10 +342,10 @@
                         </div>
                         
                         <div class="exercise-controls">
-                            <button class="btn btn-small primary" onclick="this.playExercise('${exercise.id}')">
+                            <button class="btn btn-small primary play-btn" data-exercise-id="${exercise.id}">
                                 Play Audio
                             </button>
-                            <button class="btn btn-small secondary" onclick="this.showDetails('${exercise.id}')">
+                            <button class="btn btn-small secondary details-btn" data-exercise-id="${exercise.id}">
                                 View Details
                             </button>
                         </div>
@@ -350,17 +353,134 @@
                 `;
             }
             
+            addButtonEventListeners() {
+                // Add event listeners to play buttons
+                const playButtons = this.exercisesContainer.querySelectorAll('.play-btn');
+                playButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const exerciseId = e.target.getAttribute('data-exercise-id');
+                        this.playExercise(exerciseId);
+                    });
+                });
+                
+                // Add event listeners to details buttons
+                const detailsButtons = this.exercisesContainer.querySelectorAll('.details-btn');
+                detailsButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const exerciseId = e.target.getAttribute('data-exercise-id');
+                        this.showDetails(exerciseId);
+                    });
+                });
+            }
+            
             updateStats() {
-                this.totalExercisesSpan.textContent = this.exercises.length;
-                this.filteredCountSpan.textContent = this.filteredExercises.length;
+                if (this.totalExercisesSpan) {
+                    this.totalExercisesSpan.textContent = this.exercises.length;
+                }
+                if (this.filteredCountSpan) {
+                    this.filteredCountSpan.textContent = this.filteredExercises.length;
+                }
             }
             
             playExercise(exerciseId) {
                 const exercise = this.exercises.find(e => e.id === exerciseId);
                 if (exercise) {
-                    // This would integrate with your audio system
-                    alert(`Playing exercise: ${exercise.title}\n\nNote: Audio playback integration needed`);
+                    this.playExerciseAudio(exercise);
                 }
+            }
+            
+            playExerciseAudio(exercise) {
+                // Create a simple audio context for playing tones
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Generate a simple scale based on exercise difficulty
+                const notes = this.generateExerciseNotes(exercise.difficulty);
+                let noteIndex = 0;
+                
+                const playNextNote = () => {
+                    if (noteIndex < notes.length) {
+                        const note = notes[noteIndex];
+                        this.playTone(audioContext, note.frequency, note.duration);
+                        noteIndex++;
+                        setTimeout(playNextNote, note.duration * 1000 + 200); // Small pause between notes
+                    }
+                };
+                
+                // Start playing
+                playNextNote();
+                
+                // Show exercise info
+                const info = document.createElement('div');
+                info.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; 
+                    background: #667eea; color: white; 
+                    padding: 15px; border-radius: 10px; 
+                    z-index: 1000; font-weight: bold;
+                `;
+                info.textContent = `Playing: ${exercise.title}`;
+                document.body.appendChild(info);
+                
+                // Remove info after playing
+                setTimeout(() => {
+                    if (info.parentNode) {
+                        info.parentNode.removeChild(info);
+                    }
+                }, notes.length * 1000 + 1000);
+            }
+            
+            generateExerciseNotes(difficulty) {
+                // Generate different note patterns based on difficulty
+                const baseFreq = 220; // A3
+                const notes = [];
+                
+                if (difficulty === 'beginner') {
+                    // Simple ascending scale
+                    for (let i = 0; i < 8; i++) {
+                        notes.push({
+                            frequency: baseFreq * Math.pow(2, i/12), // Major scale
+                            duration: 0.8
+                        });
+                    }
+                } else if (difficulty === 'intermediate') {
+                    // Arpeggio pattern
+                    const arpeggio = [0, 4, 7, 12, 7, 4, 0]; // C major arpeggio
+                    for (let i = 0; i < arpeggio.length; i++) {
+                        notes.push({
+                            frequency: baseFreq * Math.pow(2, arpeggio[i]/12),
+                            duration: 0.6
+                        });
+                    }
+                } else { // advanced
+                    // More complex pattern
+                    const pattern = [0, 2, 4, 5, 7, 9, 11, 12, 11, 9, 7, 5, 4, 2, 0];
+                    for (let i = 0; i < pattern.length; i++) {
+                        notes.push({
+                            frequency: baseFreq * Math.pow(2, pattern[i]/12),
+                            duration: 0.4
+                        });
+                    }
+                }
+                
+                return notes;
+            }
+            
+            playTone(audioContext, frequency, duration) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.type = 'sine';
+                
+                // Create a gentle attack and release
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
             }
             
             showDetails(exerciseId) {

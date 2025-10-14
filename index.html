@@ -3,12 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown Timer</title>
+    <title>Farinelli Breathing Exercise</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="counter">00</div>
-    <div id="increment">Increment: 1</div>
-    <button id="startButton">Start Timer</button>
+    <div class="container">
+        <header>
+            <h1>Farinelli Breathing Exercise</h1>
+            <p class="subtitle">Learn breath control through the ancient technique</p>
+        </header>
+
+        <div class="exercise-info">
+            <h2>About This Exercise</h2>
+            <p>The Farinelli breathing exercise is designed to teach <strong>breath control</strong>, not lung capacity. You'll take the same amount of breath throughout, but gradually extend the duration of each phase.</p>
+            
+            <div class="key-points">
+                <h3>Key Principles:</h3>
+                <ul>
+                    <li>Same breath volume throughout the entire exercise</li>
+                    <li>Only the timing changes - inhale, hold, and exhale for the same count</li>
+                    <li>No breaks between cycles - continuous flow</li>
+                    <li>Control air with your body, not your throat</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="exercise-controls">
+            <div class="settings">
+                <label for="startingCount">Starting Count:</label>
+                <input type="number" id="startingCount" value="4" min="3" max="12">
+                
+                <label for="maxCount">Maximum Count:</label>
+                <input type="number" id="maxCount" value="10" min="5" max="20">
+            </div>
+
+            <div class="current-cycle">
+                <div class="cycle-info">
+                    <span id="currentCount">4</span> count cycle
+                </div>
+            </div>
+
+            <div class="timer-display">
+                <div class="phase" id="currentPhase">Ready</div>
+                <div class="countdown" id="countdown">--</div>
+            </div>
+
+            <div class="controls">
+                <button id="startBtn" class="btn primary">Start Exercise</button>
+                <button id="pauseBtn" class="btn secondary" disabled>Pause</button>
+                <button id="stopBtn" class="btn secondary" disabled>Stop</button>
+            </div>
+
+            <div class="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Cycle 1 of 7</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Use:</h3>
+            <ol>
+                <li>Set your starting count (3-12) and maximum count</li>
+                <li>Click "Start Exercise" and listen for the gentle chimes</li>
+                <li>Follow the phases: <strong>Inhale</strong> → <strong>Hold</strong> → <strong>Exhale</strong></li>
+                <li>The count increases by 1 each cycle automatically</li>
+                <li>Focus on maintaining the same breath volume throughout</li>
+            </ol>
+        </div>
+
+        <footer>
+            <p>Based on the traditional Farinelli breathing technique for breath control mastery.</p>
+        </footer>
+    </div>
 
     <script src="script.js"></script>
 </body>

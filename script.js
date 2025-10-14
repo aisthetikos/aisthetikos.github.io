@@ -1,17 +1,19 @@
-        if (this.isRunning) {
-            this.currentCycle++;
-            this.currentCount++;
-            this.currentCountElement.textContent = this.currentCount;
-            this.updateProgress();
-            
-            if (this.currentCount <= this.maxCount) {
-                // Seamless transition to next cycle
-                await this.runCycle();
-            } else {
-                // Exercise complete
-                this.completeExercise();
-            }
-        }equencies = {
+class FarinelliBreathingExercise {
+    constructor() {
+        this.currentPhase = 'ready';
+        this.currentCount = 4;
+        this.startingCount = 4;
+        this.maxCount = 10;
+        this.currentCycle = 1;
+        this.totalCycles = 0;
+        this.timeRemaining = 0;
+        this.interval = null;
+        this.isRunning = false;
+        this.isPaused = false;
+        
+        // Audio context for chimes and metronome
+        this.audioContext = null;
+        this.chimeFrequencies = {
             inhale: 523.25, // C5
             hold: 659.25,   // E5
             exhale: 392.00  // G4

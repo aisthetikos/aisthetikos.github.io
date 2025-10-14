@@ -1,10 +1,14 @@
-# Farinelli Breathing Exercise
+## Files
 
-A web-based guide for the traditional Farinelli breathing exercise, designed to teach breath control through progressive timing techniques.
+- `index.html` - Main breathing exercise application
+- `vocal-exercises.html` - Vocal exercises browser and practice interface
+- `vocal_exercises.js` - Extracted exercise data from Lamperti sheet music
+- `styles.css` - Styling and responsive design
+- `script.js` - Breathing exercise logic and audio generation
+- `README.md` - This documentationping breath control, not lung capacity. The key principle is maintaining the same breath volume throughout while gradually extending the duration of each phase (inhale, hold, exhale).
 
-## About the Exercise
-
-The Farinelli breathing exercise is a classical technique for developing breath control, not lung capacity. The key principle is maintaining the same breath volume throughout while gradually extending the duration of each phase (inhale, hold, exhale).
+### 2. Lamperti Vocal Exercises
+Classical vocal training exercises extracted from the original Lamperti Daily Exercises sheet music using AI OCR technology. Features 18 exercises with varying difficulty levels and practice instructions.
 
 ### Key Features
 
@@ -32,9 +36,11 @@ The Farinelli breathing exercise is a classical technique for developing breath 
 
 ## Files
 
-- `index.html` - Main application structure
+- `index.html` - Main breathing exercise application
+- `vocal-exercises.html` - Vocal exercises browser and practice interface
+- `vocal_exercises.js` - Extracted exercise data from Lamperti sheet music
 - `styles.css` - Styling and responsive design
-- `script.js` - Exercise logic and audio generation
+- `script.js` - Breathing exercise logic and audio generation
 - `README.md` - This documentation
 
 ## Hosting

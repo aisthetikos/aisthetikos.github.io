@@ -35,9 +35,15 @@ function secondsCounterWithIncrement(initialMaxCount, initialRepetitions) {
     }
     repeatLoop(0);
   }
+  // This is the main change: run the counter ONLY when the button is clicked.
   runCounter();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  secondsCounterWithIncrement(5, 3);
+  const startButton = document.getElementById('startButton');
+  startButton.addEventListener('click', () => {
+    // Hide the button after it's clicked to prevent re-starts
+    startButton.style.display = 'none'; 
+    secondsCounterWithIncrement(5, 3);
+  });
 });

@@ -100,15 +100,11 @@
                             <p><strong>Activity:</strong> 15 minutes. Execute 10-second coordinated attacks on C4-D4 (filo di voce onset) with 20-second rests. Target ~30 attempts.</p>
                             <p class="felt-goal"><strong>Felt Goal:</strong> The sound starts instantaneously and softly with zero push.</p>
                             <div class="audio-control">
-                                <label for="mvLesson1Note">
-                                    Reference note:
-                                    <select id="mvLesson1Note" class="audio-note-select" data-sequence="mv-lesson1">
-                                        <option value="C4">C4</option>
-                                        <option value="D4">D4</option>
-                </select>
-                                </label>
-                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="mv-lesson1">
-                                    Play Reference
+                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="mv-c4">
+                                    Play C4 Reference
+                                </button>
+                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="mv-d4">
+                                    Play D4 Reference
                                 </button>
                             </div>
                         </div>
@@ -117,12 +113,24 @@
                             <p><strong>Activity:</strong> 10 minutes. Execute 5-second, five-note scales on a pure “U” or “O” vowel with 15-second rests. Target ~30 attempts.</p>
                             <p class="felt-goal"><strong>Felt Goal:</strong> The throat remains relaxed during simple pitch changes.</p>
                             <div class="audio-control">
-                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="vo-lesson1">
-                                    Play Scale Reference
+                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="vo-c4">
+                                    Play C4
+                                </button>
+                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="vo-d4">
+                                    Play D4
+                                </button>
+                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="vo-e4">
+                                    Play E4
+                                </button>
+                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="vo-f4">
+                                    Play F4
+                                </button>
+                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="vo-g4">
+                                    Play G4
                                 </button>
                             </div>
+                        </div>
             </div>
-        </div>
                     <p class="affirmation">"My effort is gentle. I am proving that the feeling of effortlessness can be sustained. I am looking for ease, not effort."</p>
                 </article>
 
@@ -335,7 +343,7 @@
                             <p><strong>Activity:</strong> 40-50 minutes. Execute 4-5 total attempts (focus on “Caro mio ben” or similar repertoire).</p>
                             <p class="felt-goal"><strong>Felt Goal:</strong> Commit to inhaling for the whole phrase; maintain long, relaxed flow.</p>
                         </div>
-                    </div>
+        </div>
                     <p class="affirmation">"My breath is my guide. I commit to the whole phrase. The beauty of the tone is enough."</p>
                 </article>
             </section>
@@ -382,21 +390,13 @@
             };
 
             const AUDIO_SEQUENCES = {
-                'mv-lesson1': ({ selectedNote }) => {
-                    if (!selectedNote) return [];
-                    return [{ note: selectedNote, dynamic: 'mf' }];
-                },
-                'vo-lesson1': () => ([
-                    { note: 'C4', dynamic: 'mf' },
-                    { note: 'D4', dynamic: 'mf' },
-                    { note: 'E4', dynamic: 'mf' },
-                    { note: 'F4', dynamic: 'mf' },
-                    { note: 'G4', dynamic: 'mf' },
-                    { note: 'F4', dynamic: 'mf' },
-                    { note: 'E4', dynamic: 'mf' },
-                    { note: 'D4', dynamic: 'mf' },
-                    { note: 'C4', dynamic: 'mf' }
-                ])
+                'mv-c4': () => ([{ note: 'C4', dynamic: 'mf' }]),
+                'mv-d4': () => ([{ note: 'D4', dynamic: 'mf' }]),
+                'vo-c4': () => ([{ note: 'C4', dynamic: 'mf' }]),
+                'vo-d4': () => ([{ note: 'D4', dynamic: 'mf' }]),
+                'vo-e4': () => ([{ note: 'E4', dynamic: 'mf' }]),
+                'vo-f4': () => ([{ note: 'F4', dynamic: 'mf' }]),
+                'vo-g4': () => ([{ note: 'G4', dynamic: 'mf' }])
             };
 
             let audioContext = null;
@@ -430,26 +430,11 @@
                 const sequenceFactory = AUDIO_SEQUENCES[sequenceKey];
                 if (!sequenceFactory) return;
 
-                const select = document.querySelector(`.audio-note-select[data-sequence="${sequenceKey}"]`);
-                const selectedNote = select ? select.value : null;
-
-                const sequence = typeof sequenceFactory === 'function'
-                    ? sequenceFactory({ selectedNote })
-                    : sequenceFactory;
-
+                const sequence = sequenceFactory();
                 if (!sequence || sequence.length === 0) return;
 
                 const defaultLabel = button.dataset.defaultLabel || button.textContent.trim();
 
-                if (sequenceKey === 'vo-lesson1') {
-                    const playbackToken = Symbol();
-                    button.dataset.playbackToken = playbackToken.toString();
-                    button.dataset.playing = 'true';
-                    button.textContent = defaultLabel;
-                    scheduleScaleWithTone(sequence, button, playbackToken, defaultLabel);
-                    return;
-                }
-                
                 const playbackToken = Symbol();
                 button.dataset.playbackToken = playbackToken.toString();
                 button.dataset.playing = 'true';
@@ -479,10 +464,10 @@
                     if (!fileName) {
                         currentIndex++;
                         playNext();
-                        return;
-                    }
-
-                    playAudioFile(fileName, { duration })
+                    return;
+                }
+                
+                    playAudioFile(fileName, { duration: duration ?? 2 })
                         .then(() => {
                             currentIndex++;
                             playNext();
@@ -741,8 +726,8 @@
                         reject(new Error('Audio element error'));
                     };
 
-                    audio.addEventListener('ended', onEnded);
-                    audio.addEventListener('error', onError);
+                    audio.addEventListener('ended', onEnded, { once: true });
+                    audio.addEventListener('error', onError, { once: true });
                     audio.addEventListener('canplay', () => {
                         const playPromise = audio.play();
                         if (playPromise instanceof Promise) {

@@ -389,7 +389,18 @@
             const audioButtons = document.querySelectorAll('.audio-btn');
 
             audioButtons.forEach(button => {
+                if (!button.dataset.defaultLabel) {
+                    button.dataset.defaultLabel = button.textContent.trim();
+                }
+
                 button.addEventListener('click', () => {
+                    const isPlaying = button.dataset.playing === 'true';
+                    if (isPlaying) {
+                        stopActivePlayers();
+                        return;
+                    }
+
+                    stopActivePlayers();
                     const sequenceKey = button.getAttribute('data-audio-sequence');
                     playAudioSequence(sequenceKey, button);
                 });
@@ -408,19 +419,19 @@
 
                 if (!sequence || sequence.length === 0) return;
 
-                stopActivePlayers();
-
-                const originalText = button.textContent;
                 const playbackToken = Symbol();
+                const defaultLabel = button.dataset.defaultLabel || button.textContent.trim();
                 button.dataset.playbackToken = playbackToken.toString();
-                button.textContent = 'Playing...';
+                button.dataset.playing = 'true';
+                button.textContent = defaultLabel;
 
                 let currentIndex = 0;
 
                 const playNext = () => {
                     if (currentIndex >= sequence.length) {
                         if (button.dataset.playbackToken === playbackToken.toString()) {
-                            button.textContent = originalText;
+                            button.dataset.playing = 'false';
+                            button.textContent = defaultLabel;
                         }
                         return;
                     }
@@ -450,14 +461,24 @@
             }
 
             function stopActivePlayers() {
-                activePlayers.forEach(stop => {
+                const currentPlayers = [...activePlayers];
+                activePlayers = [];
+
+                currentPlayers.forEach(stop => {
                     try {
                         stop();
                     } catch (error) {
                         console.error('Failed to stop audio playback', error);
                     }
                 });
-                activePlayers = [];
+
+                audioButtons.forEach(button => {
+                    if (button.dataset.defaultLabel) {
+                        button.textContent = button.dataset.defaultLabel;
+                    }
+                    button.dataset.playing = 'false';
+                    delete button.dataset.playbackToken;
+                });
             }
 
             function ensureAudioContext() {

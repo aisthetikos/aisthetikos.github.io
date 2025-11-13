@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bel Canto Practice</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://unpkg.com/tone@14.8.39/build/Tone.js"></script>
 </head>
 <body>
     <div class="container">
@@ -411,18 +410,11 @@
                     button.dataset.defaultLabel = button.textContent.trim();
                 }
 
-                button.addEventListener('click', async () => {
-                    await Tone.start();
-
-                    const isPlaying = button.dataset.playing === 'true';
-                    if (isPlaying) {
-                        stopActivePlayers();
-                        return;
-                    }
-                     const sequenceKey = button.getAttribute('data-audio-sequence');
-                     playAudioSequence(sequenceKey, button);
-                 });
-             });
+                button.addEventListener('click', () => {
+                    const sequenceKey = button.getAttribute('data-audio-sequence');
+                    playAudioSequence(sequenceKey, button);
+                });
+            });
 
             function playAudioSequence(sequenceKey, button) {
                 const sequenceFactory = AUDIO_SEQUENCES[sequenceKey];
@@ -433,6 +425,13 @@
 
                 const defaultLabel = button.dataset.defaultLabel || button.textContent.trim();
 
+                if (sequence.length === 1) {
+                    const step = sequence[0];
+                    playWebAudioNote(step.note, step.dynamic, step.duration ?? 2);
+                    button.textContent = defaultLabel;
+                    return;
+                }
+                
                 const playbackToken = Symbol();
                 button.dataset.playbackToken = playbackToken.toString();
                 button.dataset.playing = 'true';
@@ -462,9 +461,9 @@
                     if (!fileName) {
                         currentIndex++;
                         playNext();
-                    return;
-                }
-                
+                        return;
+                    }
+
                     playAudioFile(fileName, { duration: duration ?? 2 })
                         .then(() => {
                             currentIndex++;
@@ -478,6 +477,48 @@
                 };
 
                 playNext();
+            }
+
+            function playWebAudioNote(note, dynamic, duration) {
+                const fileName = NOTE_FILES[note]?.[dynamic];
+                if (!fileName) return;
+
+                loadAudioBuffer(buildAudioURL(fileName))
+                    .then(buffer => {
+                        const context = ensureAudioContext();
+                        const source = context.createBufferSource();
+                        source.buffer = buffer;
+                        const gainNode = context.createGain();
+                        gainNode.gain.setValueAtTime(1, context.currentTime);
+                        source.connect(gainNode);
+                        gainNode.connect(context.destination);
+
+                        let stopped = false;
+                        const stop = () => {
+                            if (stopped) return;
+                            stopped = true;
+                            try {
+                                source.stop();
+                            } catch (error) {
+                                // ignore
+                            }
+                            activePlayers = activePlayers.filter(player => player !== stop);
+                        };
+
+                        activePlayers.push(stop);
+
+                        source.onended = () => {
+                            stopped = true;
+                            activePlayers = activePlayers.filter(player => player !== stop);
+                        };
+
+                        const startTime = context.currentTime;
+                        source.start(startTime);
+                        source.stop(startTime + duration);
+                    })
+                    .catch(error => {
+                        console.error('Failed to play note buffer', error);
+                    });
             }
 
             function scheduleScaleWithTone(sequence, button, playbackToken, defaultLabel) {
@@ -588,8 +629,6 @@
             }
 
             function stopActivePlayers() {
-                stopToneTransport();
-
                 const currentPlayers = [...activePlayers];
                 activePlayers = [];
 

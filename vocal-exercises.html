@@ -521,8 +521,7 @@
                     buffers.forEach((buffer, index) => {
                         const step = sequence[index];
                         if (!buffer) {
-                            const advance = step.advanceAfter ?? step.duration ?? defaultAdvance;
-                            cumulative += advance;
+                            cumulative += step.advanceAfter ?? step.duration ?? defaultAdvance;
                             return;
                         }
 

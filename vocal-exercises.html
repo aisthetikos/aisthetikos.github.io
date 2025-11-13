@@ -343,49 +343,33 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const AUDIO_BASE_PATH = './Audio/';
-            const AUDIO_SUPPORT = (() => {
-                const audio = document.createElement('audio');
-                return {
-                    aiff: !!audio.canPlayType && audio.canPlayType('audio/aiff') !== '',
-                    wav: !!audio.canPlayType && audio.canPlayType('audio/wav') !== ''
-                };
-            })();
-
-            let audioSupportWarningShown = false;
 
             const NOTE_FILES = {
                 'C3': {
-                    pp: 'Piano.pp.C3.wav',
                     mf: 'Piano.mf.C3.wav',
                     ff: 'Piano.ff.C3.wav'
                 },
                 'A3': {
-                    pp: 'Piano.pp.A3.wav',
                     mf: 'Piano.mf.A3.wav',
                     ff: 'Piano.ff.A3.wav'
                 },
                 'C4': {
-                    pp: 'Piano.pp.C4.wav',
                     mf: 'Piano.mf.C4.wav',
                     ff: 'Piano.ff.C4.wav'
                 },
                 'D4': {
-                    pp: 'Piano.pp.D4.wav',
                     mf: 'Piano.mf.D4.wav',
                     ff: 'Piano.ff.D4.wav'
                 },
                 'E4': {
-                    pp: 'Piano.pp.E4.wav',
                     mf: 'Piano.mf.E4.wav',
                     ff: 'Piano.ff.E4.wav'
                 },
                 'F4': {
-                    pp: 'Piano.pp.F4.wav',
                     mf: 'Piano.mf.F4.wav',
                     ff: 'Piano.ff.F4.wav'
                 },
                 'G4': {
-                    pp: 'Piano.pp.G4.wav',
                     mf: 'Piano.mf.G4.wav',
                     ff: 'Piano.ff.G4.wav'
                 }
@@ -394,12 +378,13 @@
             const AUDIO_SEQUENCES = {
                 'mv-lesson1': ({ selectedNote }) => {
                     if (!selectedNote) return [];
-                    return [{ note: selectedNote, dynamic: 'pp' }];
+                    return [{ note: selectedNote, dynamic: 'mf' }];
                 }
             };
 
             let audioContext = null;
             const audioBufferCache = new Map();
+            let activePlayers = [];
 
             const audioButtons = document.querySelectorAll('.audio-btn');
 
@@ -423,16 +408,20 @@
 
                 if (!sequence || sequence.length === 0) return;
 
+                stopActivePlayers();
+
                 const originalText = button.textContent;
-                button.disabled = true;
+                const playbackToken = Symbol();
+                button.dataset.playbackToken = playbackToken.toString();
                 button.textContent = 'Playing...';
 
                 let currentIndex = 0;
 
                 const playNext = () => {
                     if (currentIndex >= sequence.length) {
-                        button.disabled = false;
-                        button.textContent = originalText;
+                        if (button.dataset.playbackToken === playbackToken.toString()) {
+                            button.textContent = originalText;
+                        }
                         return;
                     }
 
@@ -452,16 +441,23 @@
                         })
                         .catch(error => {
                             console.error('Audio playback failed:', error);
-                            if (!audioSupportWarningShown) {
-                                alert('Unable to play the selected reference note. If the audio files are AIFF, please convert them to WAV for broader browser support.');
-                                audioSupportWarningShown = true;
-                            }
                             currentIndex++;
                             playNext();
                         });
                 };
 
                 playNext();
+            }
+
+            function stopActivePlayers() {
+                activePlayers.forEach(stop => {
+                    try {
+                        stop();
+                    } catch (error) {
+                        console.error('Failed to stop audio playback', error);
+                    }
+                });
+                activePlayers = [];
             }
 
             function ensureAudioContext() {
@@ -481,26 +477,61 @@
             }
 
             function playWithAudioElement(url) {
-                if (!AUDIO_SUPPORT.aiff && url.toLowerCase().endsWith('.aiff')) {
-                    return Promise.reject(new Error('AIFF not supported'));
-                }
-
                 return new Promise((resolve, reject) => {
                     const audio = new Audio();
                     audio.src = url;
                     audio.preload = 'auto';
                     audio.currentTime = 0;
+                    let settled = false;
 
-                    audio.addEventListener('ended', resolve, { once: true });
-                    audio.addEventListener('error', () => reject(new Error('Audio element error')), { once: true });
+                    const cleanup = () => {
+                        audio.removeEventListener('ended', onEnded);
+                        audio.removeEventListener('error', onError);
+                    };
+
+                    const stop = () => {
+                        if (settled) return;
+                        settled = true;
+                        cleanup();
+                        audio.pause();
+                        audio.currentTime = 0;
+                        activePlayers = activePlayers.filter(player => player !== stop);
+                        resolve();
+                    };
+
+                    const onEnded = () => {
+                        if (settled) return;
+                        settled = true;
+                        cleanup();
+                        activePlayers = activePlayers.filter(player => player !== stop);
+                        resolve();
+                    };
+
+                    const onError = () => {
+                        if (settled) return;
+                        settled = true;
+                        cleanup();
+                        activePlayers = activePlayers.filter(player => player !== stop);
+                        reject(new Error('Audio element error'));
+                    };
+
+                    audio.addEventListener('ended', onEnded);
+                    audio.addEventListener('error', onError);
                     audio.addEventListener('canplay', () => {
                         const playPromise = audio.play();
                         if (playPromise instanceof Promise) {
-                            playPromise.catch(reject);
+                            playPromise.catch(err => {
+                                if (settled) return;
+                                settled = true;
+                                cleanup();
+                                activePlayers = activePlayers.filter(player => player !== stop);
+                                reject(err);
+                            });
                         }
                     }, { once: true });
 
                     audio.load();
+                    activePlayers.push(stop);
                 });
             }
 
@@ -520,12 +551,41 @@
                     audioBufferCache.set(url, buffer);
                 }
 
-                return new Promise(resolve => {
+                return new Promise((resolve, reject) => {
                     const source = context.createBufferSource();
                     source.buffer = buffer;
                     source.connect(context.destination);
-                    source.addEventListener('ended', resolve, { once: true });
-                    source.start();
+                    let settled = false;
+
+                    const stop = () => {
+                        if (settled) return;
+                        settled = true;
+                        try {
+                            source.stop();
+                        } catch (error) {
+                            console.error('Unable to stop Web Audio source', error);
+                        }
+                        activePlayers = activePlayers.filter(player => player !== stop);
+                        resolve();
+                    };
+
+                    source.onended = () => {
+                        if (settled) return;
+                        settled = true;
+                        activePlayers = activePlayers.filter(player => player !== stop);
+                        resolve();
+                    };
+
+                    try {
+                        source.start();
+                    } catch (error) {
+                        settled = true;
+                        activePlayers = activePlayers.filter(player => player !== stop);
+                        reject(error);
+                        return;
+                    }
+
+                    activePlayers.push(stop);
                 });
             }
         });

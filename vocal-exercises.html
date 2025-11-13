@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bel Canto Practice</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/tone@14.8.39/build/Tone.js"></script>
 </head>
 <body>
     <div class="container">
@@ -386,15 +387,15 @@
                     return [{ note: selectedNote, dynamic: 'mf' }];
                 },
                 'vo-lesson1': () => ([
-                    { note: 'C4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
-                    { note: 'D4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
-                    { note: 'E4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
-                    { note: 'F4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
-                    { note: 'G4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
-                    { note: 'F4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
-                    { note: 'E4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
-                    { note: 'D4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
-                    { note: 'C4', dynamic: 'mf', duration: 2 }
+                    { note: 'C4', dynamic: 'mf' },
+                    { note: 'D4', dynamic: 'mf' },
+                    { note: 'E4', dynamic: 'mf' },
+                    { note: 'F4', dynamic: 'mf' },
+                    { note: 'G4', dynamic: 'mf' },
+                    { note: 'F4', dynamic: 'mf' },
+                    { note: 'E4', dynamic: 'mf' },
+                    { note: 'D4', dynamic: 'mf' },
+                    { note: 'C4', dynamic: 'mf' }
                 ])
             };
 
@@ -443,10 +444,10 @@
                     button.dataset.playbackToken = playbackToken.toString();
                     button.dataset.playing = 'true';
                     button.textContent = defaultLabel;
-                    scheduleScaleSequence(sequence, button, playbackToken, defaultLabel);
+                    scheduleScaleWithTone(sequence, button, playbackToken, defaultLabel);
                     return;
                 }
-
+                
                 const playbackToken = Symbol();
                 button.dataset.playbackToken = playbackToken.toString();
                 button.dataset.playing = 'true';
@@ -494,60 +495,58 @@
                 playNext();
             }
 
-            function scheduleScaleSequence(sequence, button, playbackToken, defaultLabel) {
-                const context = ensureAudioContext();
-                const defaultAdvance = 0.6;
-                const defaultDuration = 2;
-                const startDelay = 0.25;
-                const baseTime = context.currentTime + startDelay;
-
-                const loadPromises = sequence.map(step => {
-                    const fileName = NOTE_FILES[step.note]?.[step.dynamic];
-                    if (!fileName) return Promise.resolve(null);
-                    return loadAudioBuffer(buildAudioURL(fileName)).catch(error => {
-                        console.error('Failed to load audio buffer', error);
-                        return null;
-                    });
-                });
-
-                Promise.all(loadPromises).then(buffers => {
+            function scheduleScaleWithTone(sequence, button, playbackToken, defaultLabel) {
+                const players = new Tone.Players({
+                    ...sequence.reduce((acc, step) => {
+                        const fileName = NOTE_FILES[step.note]?.[step.dynamic];
+                        if (fileName) {
+                            acc[`${step.note}-${step.dynamic}`] = `${AUDIO_BASE_PATH}${fileName}`;
+                        }
+                        return acc;
+                    }, {})
+                }, () => {
                     if (button.dataset.playbackToken !== playbackToken.toString()) {
+                        players.dispose();
                         return;
                     }
 
-                    let cumulative = 0;
+                    const transportBpm = 120;
+                    Tone.Transport.bpm.value = transportBpm;
 
-                    buffers.forEach((buffer, index) => {
-                        const step = sequence[index];
-                        if (!buffer) {
-                            cumulative += step.advanceAfter ?? step.duration ?? defaultAdvance;
-                            return;
-                        }
-
-                        const advance = step.advanceAfter ?? defaultAdvance;
-                        const duration = step.duration ?? defaultDuration;
-                        const startTime = baseTime + cumulative;
-                        const stopTime = startTime + duration;
-
-                        try {
-                            const { stop } = scheduleBufferPlayback(buffer, startTime, stopTime);
-                            activePlayers.push(stop);
-                        } catch (error) {
-                            console.error('Unable to schedule note playback', error);
-                        }
-
-                        cumulative += advance;
+                    const events = sequence.map((step, idx) => {
+                        const key = `${step.note}-${step.dynamic}`;
+                        return {
+                            time: idx * 0.6,
+                            key
+                        };
                     });
 
-                    const totalDuration = cumulative + (sequence[sequence.length - 1].duration ?? defaultDuration) + startDelay;
+                    const startTime = Tone.now() + 0.2;
+
+                    events.forEach(event => {
+                        const player = players.player(event.key);
+                        player.volume.value = -3;
+                        player.start(startTime + event.time, 0, 2);
+                    });
+
+                    const stopHandle = () => {
+                        Tone.Transport.stop();
+                        players.dispose();
+                        activePlayers = activePlayers.filter(entry => entry !== stopHandle);
+                    };
+
+                    activePlayers.push(stopHandle);
+
+                    const totalTime = events.length * 0.6 + 2.5;
                     const doneTimer = setTimeout(() => {
                         activeTimers = activeTimers.filter(t => t !== doneTimer);
+                        stopHandle();
                         if (button.dataset.playbackToken === playbackToken.toString()) {
                             button.dataset.playing = 'false';
                             button.textContent = defaultLabel;
                             delete button.dataset.playbackToken;
                         }
-                    }, totalDuration * 1000);
+                    }, totalTime * 1000);
                     activeTimers.push(doneTimer);
                 });
             }

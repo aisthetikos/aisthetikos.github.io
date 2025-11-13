@@ -411,7 +411,9 @@
                     button.dataset.defaultLabel = button.textContent.trim();
                 }
 
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async () => {
+                    await Tone.start();
+
                     const isPlaying = button.dataset.playing === 'true';
                     if (isPlaying) {
                         stopActivePlayers();
@@ -496,6 +498,8 @@
             }
 
             function scheduleScaleWithTone(sequence, button, playbackToken, defaultLabel) {
+                stopToneTransport();
+
                 const players = new Tone.Players({
                     ...sequence.reduce((acc, step) => {
                         const fileName = NOTE_FILES[step.note]?.[step.dynamic];
@@ -510,8 +514,7 @@
                         return;
                     }
 
-                    const transportBpm = 120;
-                    Tone.Transport.bpm.value = transportBpm;
+                    Tone.Transport.cancel();
 
                     const events = sequence.map((step, idx) => {
                         const key = `${step.note}-${step.dynamic}`;
@@ -521,16 +524,17 @@
                         };
                     });
 
-                    const startTime = Tone.now() + 0.2;
-
                     events.forEach(event => {
                         const player = players.player(event.key);
                         player.volume.value = -3;
-                        player.start(startTime + event.time, 0, 2);
+                        Tone.Transport.schedule(time => {
+                            player.start(time, 0, 2);
+                        }, event.time);
                     });
 
                     const stopHandle = () => {
                         Tone.Transport.stop();
+                        Tone.Transport.cancel();
                         players.dispose();
                         activePlayers = activePlayers.filter(entry => entry !== stopHandle);
                     };
@@ -548,7 +552,18 @@
                         }
                     }, totalTime * 1000);
                     activeTimers.push(doneTimer);
+
+                    Tone.Transport.start('+0.1');
                 });
+            }
+
+            function stopToneTransport() {
+                try {
+                    Tone.Transport.stop();
+                    Tone.Transport.cancel();
+                } catch (error) {
+                    console.warn('Tone.Transport stop error', error);
+                }
             }
 
             function scheduleBufferPlayback(buffer, startTime, stopTime) {
@@ -590,6 +605,8 @@
             }
 
             function stopActivePlayers() {
+                stopToneTransport();
+
                 const currentPlayers = [...activePlayers];
                 activePlayers = [];
 

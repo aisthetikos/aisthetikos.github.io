@@ -419,12 +419,10 @@
                         stopActivePlayers();
                         return;
                     }
-
-                    stopActivePlayers();
-                    const sequenceKey = button.getAttribute('data-audio-sequence');
-                    playAudioSequence(sequenceKey, button);
-                });
-            });
+                     const sequenceKey = button.getAttribute('data-audio-sequence');
+                     playAudioSequence(sequenceKey, button);
+                 });
+             });
 
             function playAudioSequence(sequenceKey, button) {
                 const sequenceFactory = AUDIO_SEQUENCES[sequenceKey];

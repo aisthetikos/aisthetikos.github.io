@@ -504,8 +504,7 @@
                 const loadPromises = sequence.map(step => {
                     const fileName = NOTE_FILES[step.note]?.[step.dynamic];
                     if (!fileName) return Promise.resolve(null);
-                    const url = buildAudioURL(fileName);
-                    return loadAudioBuffer(url).catch(error => {
+                    return loadAudioBuffer(buildAudioURL(fileName)).catch(error => {
                         console.error('Failed to load audio buffer', error);
                         return null;
                     });
@@ -530,38 +529,11 @@
                         const startTime = baseTime + cumulative;
                         const stopTime = startTime + duration;
 
-                        const source = context.createBufferSource();
-                        source.buffer = buffer;
-                        const gainNode = context.createGain();
-                        gainNode.gain.setValueAtTime(1, startTime);
-                        source.connect(gainNode);
-                        gainNode.connect(context.destination);
-
-                        let stopped = false;
-                        const stop = () => {
-                            if (stopped) return;
-                            stopped = true;
-                            try {
-                                source.stop();
-                            } catch (error) {
-                                // ignore stop errors
-                            }
-                            activePlayers = activePlayers.filter(player => player !== stop);
-                        };
-
-                        activePlayers.push(stop);
-
-                        source.onended = () => {
-                            stopped = true;
-                            activePlayers = activePlayers.filter(player => player !== stop);
-                        };
-
                         try {
-                            source.start(startTime);
-                            source.stop(stopTime);
+                            const { stop } = scheduleBufferPlayback(buffer, startTime, stopTime);
+                            activePlayers.push(stop);
                         } catch (error) {
                             console.error('Unable to schedule note playback', error);
-                            stop();
                         }
 
                         cumulative += advance;
@@ -578,6 +550,44 @@
                     }, totalDuration * 1000);
                     activeTimers.push(doneTimer);
                 });
+            }
+
+            function scheduleBufferPlayback(buffer, startTime, stopTime) {
+                const context = ensureAudioContext();
+                const source = context.createBufferSource();
+                source.buffer = buffer;
+                const gainNode = context.createGain();
+                gainNode.gain.setValueAtTime(1, startTime);
+                source.connect(gainNode);
+                gainNode.connect(context.destination);
+
+                let stopped = false;
+                const stop = () => {
+                    if (stopped) return;
+                    stopped = true;
+                    try {
+                        source.stop();
+                    } catch (error) {
+                        // ignore stop errors
+                    }
+                    activePlayers = activePlayers.filter(player => player !== stop);
+                };
+
+                activePlayers.push(stop);
+
+                source.onended = () => {
+                    stopped = true;
+                    activePlayers = activePlayers.filter(player => player !== stop);
+                };
+
+                if (typeof source.start === 'function') {
+                    source.start(startTime);
+                    if (stopTime) {
+                        source.stop(stopTime);
+                    }
+                }
+
+                return { stop };
             }
 
             function stopActivePlayers() {
@@ -617,9 +627,16 @@
                     return buffer;
                 }
 
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Failed to load audio file: ${url}`);
+                let response;
+                try {
+                    response = await fetch(url);
+                } catch (error) {
+                    console.warn('fetch failed, attempting local file fallback', error);
+                    return loadBufferViaXHR(url);
+                }
+
+                if (!response || !response.ok) {
+                    return loadBufferViaXHR(url);
                 }
 
                 const arrayBuffer = await response.arrayBuffer();
@@ -627,6 +644,30 @@
                 buffer = await context.decodeAudioData(arrayBuffer);
                 audioBufferCache.set(url, buffer);
                 return buffer;
+            }
+
+            function loadBufferViaXHR(url) {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', url);
+                    xhr.responseType = 'arraybuffer';
+                    xhr.onload = async () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            try {
+                                const context = ensureAudioContext();
+                                const buffer = await context.decodeAudioData(xhr.response);
+                                audioBufferCache.set(url, buffer);
+                                resolve(buffer);
+                            } catch (error) {
+                                reject(error);
+                            }
+                        } else {
+                            reject(new Error(`Failed to load audio file via XHR: ${url}`));
+                        }
+                    };
+                    xhr.onerror = () => reject(new Error(`Network error attempting to load ${url}`));
+                    xhr.send();
+                });
             }
 
             function playAudioFile(fileName, options = {}) {

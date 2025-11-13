@@ -386,21 +386,22 @@
                     return [{ note: selectedNote, dynamic: 'mf' }];
                 },
                 'vo-lesson1': () => ([
-                    { note: 'C4', dynamic: 'mf', duration: 0.6 },
-                    { note: 'D4', dynamic: 'mf', duration: 0.6 },
-                    { note: 'E4', dynamic: 'mf', duration: 0.6 },
-                    { note: 'F4', dynamic: 'mf', duration: 0.6 },
-                    { note: 'G4', dynamic: 'mf', duration: 0.6 },
-                    { note: 'F4', dynamic: 'mf', duration: 0.6 },
-                    { note: 'E4', dynamic: 'mf', duration: 0.6 },
-                    { note: 'D4', dynamic: 'mf', duration: 0.6 },
-                    { note: 'C4', dynamic: 'mf', duration: 0.6 }
+                    { note: 'C4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
+                    { note: 'D4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
+                    { note: 'E4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
+                    { note: 'F4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
+                    { note: 'G4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
+                    { note: 'F4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
+                    { note: 'E4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
+                    { note: 'D4', dynamic: 'mf', duration: 2, advanceAfter: 0.6 },
+                    { note: 'C4', dynamic: 'mf', duration: 2 }
                 ])
             };
 
             let audioContext = null;
             const audioBufferCache = new Map();
             let activePlayers = [];
+            let activeTimers = [];
 
             const audioButtons = document.querySelectorAll('.audio-btn');
 
@@ -459,7 +460,7 @@
                         return;
                     }
 
-                    const { note, dynamic, duration } = sequence[currentIndex];
+                    const { note, dynamic, duration, advanceAfter } = sequence[currentIndex];
                     const fileName = NOTE_FILES[note]?.[dynamic];
 
                     if (!fileName) {
@@ -469,15 +470,17 @@
                     }
 
                     playAudioFile(fileName, { duration })
-                        .then(() => {
-                            currentIndex++;
-                            playNext();
-                        })
                         .catch(error => {
                             console.error('Audio playback failed:', error);
-                            currentIndex++;
-                            playNext();
                         });
+
+                    const wait = Math.max(0.05, advanceAfter || duration || 0.6);
+                    const timer = setTimeout(() => {
+                        activeTimers = activeTimers.filter(t => t !== timer);
+                        currentIndex++;
+                        playNext();
+                    }, wait * 1000);
+                    activeTimers.push(timer);
                 };
 
                 playNext();
@@ -494,6 +497,9 @@
                         console.error('Failed to stop audio playback', error);
                     }
                 });
+
+                activeTimers.forEach(timer => clearTimeout(timer));
+                activeTimers = [];
 
                 audioButtons.forEach(button => {
                     if (button.dataset.defaultLabel) {

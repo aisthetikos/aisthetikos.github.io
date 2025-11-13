@@ -115,6 +115,11 @@
                             <h5>Technique: Vowel Purity / Scale Work (VO)</h5>
                             <p><strong>Activity:</strong> 10 minutes. Execute 5-second, five-note scales on a pure “U” or “O” vowel with 15-second rests. Target ~30 attempts.</p>
                             <p class="felt-goal"><strong>Felt Goal:</strong> The throat remains relaxed during simple pitch changes.</p>
+                            <div class="audio-control">
+                                <button class="btn btn-small secondary audio-btn" data-audio-sequence="vo-lesson1">
+                                    Play Scale Reference
+                                </button>
+                            </div>
             </div>
         </div>
                     <p class="affirmation">"My effort is gentle. I am proving that the feeling of effortlessness can be sustained. I am looking for ease, not effort."</p>
@@ -379,7 +384,18 @@
                 'mv-lesson1': ({ selectedNote }) => {
                     if (!selectedNote) return [];
                     return [{ note: selectedNote, dynamic: 'mf' }];
-                }
+                },
+                'vo-lesson1': () => ([
+                    { note: 'C4', dynamic: 'mf', stopAfter: 0.55 },
+                    { note: 'D4', dynamic: 'mf', stopAfter: 0.55 },
+                    { note: 'E4', dynamic: 'mf', stopAfter: 0.55 },
+                    { note: 'F4', dynamic: 'mf', stopAfter: 0.55 },
+                    { note: 'G4', dynamic: 'mf', stopAfter: 0.55 },
+                    { note: 'F4', dynamic: 'mf', stopAfter: 0.55 },
+                    { note: 'E4', dynamic: 'mf', stopAfter: 0.55 },
+                    { note: 'D4', dynamic: 'mf', stopAfter: 0.55 },
+                    { note: 'C4', dynamic: 'mf', stopAfter: 0.55 }
+                ])
             };
 
             let audioContext = null;
@@ -436,7 +452,7 @@
                         return;
                     }
 
-                    const { note, dynamic } = sequence[currentIndex];
+                    const { note, dynamic, stopAfter } = sequence[currentIndex];
                     const fileName = NOTE_FILES[note]?.[dynamic];
 
                     if (!fileName) {
@@ -445,7 +461,7 @@
                         return;
                     }
 
-                    playAudioFile(fileName)
+                    playAudioFile(fileName, { stopAfter })
                         .then(() => {
                             currentIndex++;
                             playNext();
@@ -488,24 +504,30 @@
                 return audioContext;
             }
 
-            function playAudioFile(fileName) {
+            function playAudioFile(fileName, options = {}) {
                 const url = buildAudioURL(fileName);
-                return playWithAudioElement(url).catch(() => playWithWebAudio(url));
+                return playWithAudioElement(url, options).catch(() => playWithWebAudio(url, options));
             }
 
             function buildAudioURL(fileName) {
                 return new URL(`${AUDIO_BASE_PATH}${fileName}`, window.location.href).href;
             }
 
-            function playWithAudioElement(url) {
+            function playWithAudioElement(url, options = {}) {
+                const { stopAfter } = options;
                 return new Promise((resolve, reject) => {
                     const audio = new Audio();
                     audio.src = url;
                     audio.preload = 'auto';
                     audio.currentTime = 0;
                     let settled = false;
+                    let stopTimeout;
 
                     const cleanup = () => {
+                        if (stopTimeout) {
+                            clearTimeout(stopTimeout);
+                            stopTimeout = null;
+                        }
                         audio.removeEventListener('ended', onEnded);
                         audio.removeEventListener('error', onError);
                     };
@@ -549,6 +571,9 @@
                                 reject(err);
                             });
                         }
+                        if (stopAfter && stopAfter > 0 && !settled) {
+                            stopTimeout = setTimeout(() => stop(), stopAfter * 1000);
+                        }
                     }, { once: true });
 
                     audio.load();
@@ -556,9 +581,11 @@
                 });
             }
 
-            async function playWithWebAudio(url) {
+            async function playWithWebAudio(url, options = {}) {
                 const context = ensureAudioContext();
                 await context.resume().catch(() => {});
+
+                const { stopAfter } = options;
 
                 let buffer = audioBufferCache.get(url);
                 if (!buffer) {
@@ -599,6 +626,9 @@
 
                     try {
                         source.start();
+                        if (stopAfter && stopAfter > 0) {
+                            source.stop(context.currentTime + stopAfter);
+                        }
                     } catch (error) {
                         settled = true;
                         activePlayers = activePlayers.filter(player => player !== stop);

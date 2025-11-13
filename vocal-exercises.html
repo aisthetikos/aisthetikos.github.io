@@ -469,18 +469,25 @@
                         return;
                     }
 
-                    playAudioFile(fileName, { duration })
+                    const playbackPromise = playAudioFile(fileName, { duration })
                         .catch(error => {
                             console.error('Audio playback failed:', error);
                         });
 
-                    const wait = Math.max(0.05, advanceAfter || duration || 0.6);
-                    const timer = setTimeout(() => {
-                        activeTimers = activeTimers.filter(t => t !== timer);
-                        currentIndex++;
-                        playNext();
-                    }, wait * 1000);
-                    activeTimers.push(timer);
+                    if (typeof advanceAfter === 'number') {
+                        const wait = Math.max(0.05, advanceAfter);
+                        const timer = setTimeout(() => {
+                            activeTimers = activeTimers.filter(t => t !== timer);
+                            currentIndex++;
+                            playNext();
+                        }, wait * 1000);
+                        activeTimers.push(timer);
+                    } else {
+                        playbackPromise.finally(() => {
+                            currentIndex++;
+                            playNext();
+                        });
+                    }
                 };
 
                 playNext();

@@ -16,7 +16,7 @@
                 <a href="./companion-guide.html" class="nav-link">Companion Guide</a>
             </nav>
 
-            <h1>Bel Canto Practice Script: Focused Mastery</h1>
+            <h1>Bel Canto Practice: Focused Mastery</h1>
             <p class="subtitle">Convert intuitive felt goals into precise, reliable vocal technique in nine months.</p>
         </header>
 
@@ -386,15 +386,15 @@
                     return [{ note: selectedNote, dynamic: 'mf' }];
                 },
                 'vo-lesson1': () => ([
-                    { note: 'C4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 },
-                    { note: 'D4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 },
-                    { note: 'E4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 },
-                    { note: 'F4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 },
-                    { note: 'G4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 },
-                    { note: 'F4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 },
-                    { note: 'E4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 },
-                    { note: 'D4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 },
-                    { note: 'C4', dynamic: 'mf', duration: 0.6, fadeOut: 0.2 }
+                    { note: 'C4', dynamic: 'mf', duration: 0.6 },
+                    { note: 'D4', dynamic: 'mf', duration: 0.6 },
+                    { note: 'E4', dynamic: 'mf', duration: 0.6 },
+                    { note: 'F4', dynamic: 'mf', duration: 0.6 },
+                    { note: 'G4', dynamic: 'mf', duration: 0.6 },
+                    { note: 'F4', dynamic: 'mf', duration: 0.6 },
+                    { note: 'E4', dynamic: 'mf', duration: 0.6 },
+                    { note: 'D4', dynamic: 'mf', duration: 0.6 },
+                    { note: 'C4', dynamic: 'mf', duration: 0.6 }
                 ])
             };
 
@@ -459,7 +459,7 @@
                         return;
                     }
 
-                    const { note, dynamic, duration, fadeOut } = sequence[currentIndex];
+                    const { note, dynamic, duration } = sequence[currentIndex];
                     const fileName = NOTE_FILES[note]?.[dynamic];
 
                     if (!fileName) {
@@ -468,7 +468,7 @@
                         return;
                     }
 
-                    playAudioFile(fileName, { duration, fadeOut })
+                    playAudioFile(fileName, { duration })
                         .then(() => {
                             currentIndex++;
                             playNext();
@@ -521,7 +521,7 @@
             }
 
             function playWithAudioElement(url, options = {}) {
-                const { duration, fadeOut } = options;
+                const { duration } = options;
                 return new Promise((resolve, reject) => {
                     const audio = new Audio();
                     audio.src = url;
@@ -529,21 +529,11 @@
                     audio.currentTime = 0;
                     let settled = false;
                     let stopTimeout;
-                    let fadeTimeout;
-                    let fadeInterval;
 
                     const cleanup = () => {
                         if (stopTimeout) {
                             clearTimeout(stopTimeout);
                             stopTimeout = null;
-                        }
-                        if (fadeTimeout) {
-                            clearTimeout(fadeTimeout);
-                            fadeTimeout = null;
-                        }
-                        if (fadeInterval) {
-                            clearInterval(fadeInterval);
-                            fadeInterval = null;
                         }
                         audio.volume = 1;
                         audio.removeEventListener('ended', onEnded);
@@ -591,23 +581,6 @@
                         }
                         if (duration && duration > 0 && !settled) {
                             stopTimeout = setTimeout(() => stop(), duration * 1000);
-                            if (fadeOut && fadeOut > 0 && fadeOut < duration) {
-                                fadeTimeout = setTimeout(() => {
-                                    const steps = 10;
-                                    const stepDuration = (fadeOut * 1000) / steps;
-                                    let currentStep = 0;
-                                    fadeInterval = setInterval(() => {
-                                        currentStep++;
-                                        audio.volume = Math.max(0, 1 - currentStep / steps);
-                                        if (currentStep >= steps) {
-                                            clearInterval(fadeInterval);
-                                            fadeInterval = null;
-                                        }
-                                    }, stepDuration);
-                                }, Math.max((duration - fadeOut) * 1000, 0));
-                            }
-                        } else {
-                            audio.volume = 1;
                         }
                     }, { once: true });
 
@@ -620,7 +593,7 @@
                 const context = ensureAudioContext();
                 await context.resume().catch(() => {});
 
-                const { duration, fadeOut } = options;
+                const { duration } = options;
 
                 let buffer = audioBufferCache.get(url);
                 if (!buffer) {
@@ -666,12 +639,7 @@
                         const startTime = context.currentTime;
                         if (duration && duration > 0) {
                             const stopTime = startTime + duration;
-                            if (fadeOut && fadeOut > 0 && fadeOut < duration) {
-                                const fadeStart = Math.max(stopTime - fadeOut, startTime);
-                                gainNode.gain.setValueAtTime(1, startTime);
-                                gainNode.gain.linearRampToValueAtTime(1, fadeStart);
-                                gainNode.gain.linearRampToValueAtTime(0, stopTime);
-                            }
+                            gainNode.gain.setValueAtTime(1, startTime);
                             source.start(startTime);
                             source.stop(stopTime);
                         } else {
